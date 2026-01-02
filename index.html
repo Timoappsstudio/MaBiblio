@@ -48,6 +48,7 @@
         window.followersData = [];
         window.userProfile = { name: '', avatar: '', goalLivre: 12, goalFilm: 50, goalSerie: 10, following: [] };
         window.tempManualImage = ''; 
+        window.followFeedback = null; // CORRECTION 2: Variable pour stocker l'état du message feedback
         let currentRating = 8;
         window.authMode = 'login';
 
@@ -143,6 +144,8 @@
                 window.currentUser = user;
                 document.getElementById('auth-screen').style.display = 'none';
                 document.querySelector('.app-shell').style.display = 'flex';
+                // CORRECTION 1 : Appel explicite pour afficher les pilules au chargement
+                window.renderPills();
                 loadUserData();
                 setupSocialListeners();
             } else {
@@ -165,7 +168,6 @@
                 if (d.exists()) {
                     const data = d.data();
                     window.userProfile = { ...window.userProfile, ...data };
-                    // CORRECTION 4 (Précédente): Utilisation de Set pour éviter les doublons dans window.following
                     window.following = [...new Set(window.userProfile.following || [])];
                     loadFollowingProfiles();
                     loadFollowersProfiles(); 
@@ -210,14 +212,13 @@
                 window.socialFeed = all.filter(a => a.userId === window.currentUser.uid || window.following.includes(a.userId))
                                       .sort((a,b) => b.timestamp - a.timestamp);
                 
-                // CORRECTION 1 (Précédente): Mise à jour instantanée du badge (appelé à chaque changement DB)
                 if (window.updateNotifBadge) window.updateNotifBadge();
                 
                 if (window.currentView === 'friends') window.renderSocialFeed();
             });
         }
         
-        // CORRECTION : Nouvelle logique de badge (Basée sur le décompte total pour les likes)
+        // GESTION BADGE
         window.updateNotifBadge = () => {
             const badge = document.getElementById('notif-badge');
             if (!badge) return;
@@ -244,7 +245,6 @@
             });
 
             // On ajoute au badge la différence entre les likes actuels et les likes "vus"
-            // Cela permet d'incrémenter le badge même si le post est ancien
             if (currentTotalLikes > seenLikes) {
                 badgeCount += (currentTotalLikes - seenLikes);
             }
@@ -353,6 +353,7 @@
         // --- UI CORE ---
         const TMDB_KEY = "fa1123067cae30eea6420cfaef569bc2";
         let searchType = 'Film'; 
+        // CORRECTION 2 : Suppression de "En cours" pour les films
         const CONFIG = {
             'Film': { statuses: ['Vu', 'Wishlist'], action: 'Vu !', icon: 'fa-film', metric: 'min', color: '#AF52DE' },
             'Livre': { statuses: ['Lu', 'Wishlist', 'En cours'], action: 'Terminé !', icon: 'fa-book-open', metric: 'pages', color: '#FF9500' },
@@ -377,20 +378,27 @@
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.id === 'nav-'+view));
             document.getElementById('app-header').style.display = (view === 'home' ? 'block' : 'none');
             
-            // MODIF TASK 2 (Précédente): Mise à jour du timestamp de consultation quand on QUITTE la vue amis
             if (view !== 'friends') {
                 localStorage.setItem('mabiblio_last_check', Date.now());
-                if (window.updateNotifBadge) window.updateNotifBadge(); // Update badge UI
+                if (window.updateNotifBadge) window.updateNotifBadge(); 
             }
 
             window.refreshCurrentView();
         };
 
+        // CORRECTION 2 : Tri par date de fin (finishDate) au lieu de date d'ajout
         window.renderList = () => {
             const container = document.getElementById('main-content');
             let filtered = (window.myCollection || []).filter(i => i.type === window.currentType && i.status === window.currentStatus);
             if (!filtered.length) { container.innerHTML = `<div class="p-24 opacity-30 text-center"><i class="fa-solid fa-layer-group text-6xl mb-6"></i><div class="font-black text-xl">Rien ici</div></div>`; return; }
-            filtered.sort((a,b) => (b.lastUpdate || 0) - (a.lastUpdate || 0));
+            
+            // Tri par date de fin
+            filtered.sort((a,b) => {
+                const dateA = a.finishDate || a.lastUpdate || 0;
+                const dateB = b.finishDate || b.lastUpdate || 0;
+                return dateB > dateA ? 1 : -1;
+            });
+
             const groups = {};
             filtered.forEach(item => { const year = (item.finishDate || 'Non daté').split('-')[0]; if (!groups[year]) groups[year] = []; groups[year].push(item); });
             const years = Object.keys(groups).sort((a,b) => b === 'Non daté' ? -1 : (a === 'Non daté' ? 1 : b - a));
@@ -434,9 +442,8 @@
             window.tempItem = item; 
             document.getElementById('preview-modal').classList.add('open'); 
             const showDelete = item.docId ? true : false;
-            // MODIF TASK 5 (Précédente): Pas de bouton "En cours" pour les films
-            const isFilm = item.type === 'Film';
-
+            
+            // CORRECTION 2: Suppression du bouton "En cours" pour les films
             document.getElementById('preview-content').innerHTML = `
                 <div class="px-6 pt-24 pb-20 flex flex-col items-center">
                     <img src="${item.img || ''}" class="w-44 h-64 rounded-[24px] shadow-2xl mb-6 object-cover bg-gray-800">
@@ -444,7 +451,7 @@
                     <p class="text-blue-400 font-bold mb-6 text-sm uppercase">${item.type} • ${item.metricValue || 0} ${CONFIG[item.type].metric}</p>
                     <div class="w-full space-y-3 mb-8">
                         <button onclick="window.openNotation()" class="w-full bg-blue-600 p-4 rounded-[20px] font-black text-lg text-white">${CONFIG[item.type].action}</button>
-                        ${!isFilm ? `<button onclick="window.saveItem('En cours', null, null, null, ${item.metricValue}, false)" class="w-full bg-white/20 p-4 rounded-[20px] font-bold text-white">En cours</button>` : ''}
+                        ${item.type !== 'Film' ? `<button onclick="window.saveItem('En cours', null, null, null, ${item.metricValue}, false)" class="w-full bg-white/20 p-4 rounded-[20px] font-bold text-white">En cours</button>` : ''}
                         <button onclick="window.saveItem('Wishlist', null, null, null, ${item.metricValue}, false)" class="w-full bg-white/10 p-4 rounded-[20px] font-bold text-white">Plus tard (Wishlist)</button>
                         ${showDelete ? `<button onclick="window.deleteItem()" class="w-full bg-red-500/20 p-4 rounded-[20px] font-bold text-red-500 mt-4">Supprimer de ma collection</button>` : ''}
                     </div>
@@ -490,7 +497,6 @@
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'activity', actId), { [`reactions.${emoji}`]: op });
         };
 
-        // MODIFICATION ICI: Ajout de l'avatar dans le commentaire sauvegardé
         window.postComment = async (actId) => {
             const input = document.getElementById(`comment-in-${actId}`);
             if(!input.value.trim()) return;
@@ -498,7 +504,7 @@
                 comments: arrayUnion({ 
                     userId: window.currentUser.uid, 
                     userName: window.userProfile.name, 
-                    userAvatar: window.userProfile.avatar || '', // Sauvegarde de la photo
+                    userAvatar: window.userProfile.avatar || '', 
                     text: input.value.trim(), 
                     timestamp: Date.now() 
                 }) 
@@ -506,24 +512,31 @@
             input.value = "";
         };
 
+        // CORRECTION 2: Logique d'ajout d'ami corrigée pour afficher le message correctement
         window.followUser = async () => {
             const val = document.getElementById('follow-id').value.trim();
-            const indicator = document.getElementById('follow-success');
             if (val && val !== window.currentUser.uid) {
                 const userRef = doc(db, 'artifacts', appId, 'users', val, 'profile', 'info');
                 const userSnap = await getDoc(userRef);
                 
                 if(userSnap.exists()) {
+                    // Définit le message globalement pour survivre au re-rendu
+                    window.followFeedback = { type: 'success', msg: "✓ Ami ajouté avec succès !" };
+                    window.renderSocialFeed(); // Affichage immédiat
+
                     await updateDoc(doc(db, 'artifacts', appId, 'users', window.currentUser.uid, 'profile', 'info'), { following: arrayUnion(val) });
-                    indicator.innerText = "✓ Ami ajouté avec succès !";
-                    indicator.style.color = "#10b981";
-                    indicator.classList.remove('hidden');
+                    
+                    // Nettoyage après 3 secondes
+                    setTimeout(() => {
+                        window.followFeedback = null;
+                        const el = document.getElementById('follow-success');
+                        if(el) el.classList.add('hidden');
+                    }, 3000);
                 } else {
-                    indicator.innerText = "✕ ID Introuvable";
-                    indicator.style.color = "#ef4444";
-                    indicator.classList.remove('hidden');
+                    window.followFeedback = { type: 'error', msg: "✕ ID Introuvable" };
+                    window.renderSocialFeed();
+                    setTimeout(() => { window.followFeedback = null; const el = document.getElementById('follow-success'); if(el) el.classList.add('hidden'); }, 3000);
                 }
-                setTimeout(() => indicator.classList.add('hidden'), 3000);
             }
             document.getElementById('follow-id').value = "";
         };
@@ -584,9 +597,17 @@
                     </div>
                 </div>`; 
         };
+        
+        // CORRECTION 3: Fonction de navigation vers l'activité précise
+        window.goToActivity = (actId) => {
+            window.switchView('friends');
+            setTimeout(() => {
+                const el = document.getElementById('act-' + actId);
+                if(el) el.scrollIntoView({behavior: 'smooth', block: 'center'});
+            }, 500); 
+        };
 
         window.renderSocialFeed = () => {
-            // MODIF TASK 4 (Précédente): SAUVEGARDER L'ETAT DE L'INPUT (FOCUS + VALEUR)
             const focusedId = document.activeElement ? document.activeElement.id : null;
             const focusedVal = focusedId ? document.activeElement.value : null;
 
@@ -596,8 +617,11 @@
             const lastCheck = parseInt(localStorage.getItem('mabiblio_last_check') || '0');
             const myPosts = window.socialFeed.filter(a => a.userId === window.currentUser.uid);
             
-            // Le calcul local est fait ici aussi pour le rendu, mais le badge header est géré globalement désormais
-            
+            // CORRECTION 2: Affichage conditionnel du message de succès basé sur l'état global
+            const feedbackActive = window.followFeedback !== null;
+            const feedbackMsg = window.followFeedback?.msg || '';
+            const feedbackColor = window.followFeedback?.type === 'error' ? 'text-red-500' : 'text-green-500';
+
             const searchBlock = `
                 <div class="relative mb-8">
                     <div class="flex gap-2">
@@ -606,26 +630,24 @@
                             Suivre
                         </button>
                     </div>
-                    <div id="follow-success" class="hidden absolute -bottom-6 left-0 text-green-500 text-[10px] font-black uppercase tracking-wider"></div>
+                    <div id="follow-success" class="${feedbackActive ? '' : 'hidden'} absolute -bottom-6 left-0 ${feedbackColor} text-[10px] font-black uppercase tracking-wider">${feedbackMsg}</div>
                 </div>
             `;
 
             let feedHtml = '';
             let hasShownUpToDate = false;
 
-            // MODIF TASK 2 (Précédente): SÉPARATEUR "VOUS ÊTES À JOUR"
             window.socialFeed.forEach(act => {
-                // Insérer la ligne "À jour" dès qu'on tombe sur un post plus vieux que lastCheck
                 if (!hasShownUpToDate && act.timestamp < lastCheck && lastCheck > 0) {
                      feedHtml += `<div class="up-to-date"><div class="up-to-date-line"></div><div class="up-to-date-text">Vous êtes à jour</div><div class="up-to-date-line"></div></div>`;
                      hasShownUpToDate = true;
                 } else if (!hasShownUpToDate && act.timestamp >= lastCheck && feedHtml === '') {
-                     // Si c'est le tout premier élément et qu'il est récent, on peut mettre un petit header "Nouveau"
                      feedHtml += `<div class="up-to-date"><div class="up-to-date-line"></div><div class="up-to-date-text text-blue-600">Nouveaux Posts</div><div class="up-to-date-line"></div></div>`;
                 }
 
+                // CORRECTION 3 : Ajout de l'ID unique pour le scroll
                 feedHtml += `
-                <div class="activity-card relative">
+                <div class="activity-card relative" id="act-${act.id}">
                     ${act.userId === window.currentUser.uid ? `<button onclick="window.deleteActivity('${act.id}')" class="absolute top-5 right-5 text-gray-300 hover:text-red-500 transition-colors"><i class="fa-solid fa-trash-can"></i></button>` : ''}
                     <div class="flex items-center gap-3 mb-4 cursor-pointer" onclick="window.openPublicProfile('${act.userId}')">
                         <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-black overflow-hidden">
@@ -673,7 +695,6 @@
                 </div>`
             });
 
-            // Si on a tout affiché et qu'on n'a pas mis le séparateur, c'est que tout est nouveau ou tout est vieux (cas edge), on met à la fin si besoin.
             if (!hasShownUpToDate && window.socialFeed.length > 0) {
                  feedHtml += `<div class="up-to-date"><div class="up-to-date-line"></div><div class="up-to-date-text">Vous êtes à jour</div><div class="up-to-date-line"></div></div>`;
             }
@@ -683,7 +704,6 @@
             ${feedHtml}
             </div>`;
 
-            // MODIF TASK 4 (Précédente): RESTAURER L'INPUT FOCUS
             if(focusedId) {
                 const el = document.getElementById(focusedId);
                 if(el) {
@@ -697,11 +717,9 @@
             window.currentView = 'notifications';
             document.getElementById('app-header').style.display = 'none'; 
             
-            // --- MODIFICATION TASK 1 : RESET CLOCHE IMMEDIAT ---
-            // On met à jour le lastCheck pour les commentaires
             localStorage.setItem('mabiblio_last_check', Date.now());
 
-            // CORRECTION 2: On met à jour le total des likes VUS pour réinitialiser le badge
+            // CORRECTION 7 : Mise à jour du total des likes VUS pour réinitialiser le badge
             const myPosts = window.socialFeed.filter(a => a.userId === window.currentUser.uid);
             let currentTotalLikes = 0;
             myPosts.forEach(p => {
@@ -713,12 +731,11 @@
             });
             localStorage.setItem('mabiblio_seen_likes_count', currentTotalLikes);
 
-            if(window.updateNotifBadge) window.updateNotifBadge(); // Force UI update immediately
+            if(window.updateNotifBadge) window.updateNotifBadge();
 
             const myActivities = window.socialFeed.filter(a => a.userId === window.currentUser.uid);
             let notifs = [];
 
-            // MODIF : Récupération du Nom de l'ami via window.followingData
             const getName = (uid) => {
                  const f = window.followingData.find(u => u.uid === uid);
                  return f ? f.name : "Un ami";
@@ -729,7 +746,7 @@
                     Object.keys(act.reactions).forEach(emoji => {
                         act.reactions[emoji].forEach(uid => {
                             if (uid !== window.currentUser.uid) {
-                                notifs.push({ type: 'like', text: `a réagi ${emoji} à votre post`, item: act.itemTitle, time: act.timestamp, user: getName(uid), uid: uid });
+                                notifs.push({ type: 'like', text: `a réagi ${emoji} à votre post`, item: act.itemTitle, time: act.timestamp, user: getName(uid), uid: uid, actId: act.id });
                             }
                         });
                     });
@@ -737,7 +754,7 @@
                 if (act.comments) {
                     act.comments.forEach(c => {
                         if (c.userId !== window.currentUser.uid) {
-                            notifs.push({ type: 'comment', text: `a commenté : "${c.text}"`, item: act.itemTitle, time: c.timestamp, user: c.userName, uid: c.userId });
+                            notifs.push({ type: 'comment', text: `a commenté : "${c.text}"`, item: act.itemTitle, time: c.timestamp, user: c.userName, uid: c.userId, actId: act.id });
                         }
                     });
                 }
@@ -754,7 +771,7 @@
                     </div>
                     ${notifs.length === 0 ? '<div class="opacity-40 text-center mt-20 font-bold">Rien pour le moment</div>' : ''}
                     ${notifs.map(n => `
-                        <div class="notif-item cursor-pointer" onclick="window.openPublicProfile('${n.uid}')">
+                        <div class="notif-item cursor-pointer" onclick="window.goToActivity('${n.actId}')">
                             <div class="notif-icon text-blue-600">${n.type === 'like' ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-solid fa-comment"></i>'}</div>
                             <div class="flex-1">
                                 <div class="text-sm"><span class="font-black">${n.user}</span> ${n.text}</div>
@@ -767,7 +784,9 @@
         };
 
         console.log("MaBiblio Extensions v3.6 Chargées");
+        // CORRECTION 3 (Bug démarrage): Appel explicite des pills et de la liste au démarrage
         if(window.currentUser) {
+            window.renderPills();
             window.renderList();
         }
     </script>
@@ -800,10 +819,8 @@
         .modal { position: fixed; inset: 0; background: var(--ios-bg); z-index: 100; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
         .modal.open { transform: translateY(0); }
         
-        /* CORRECTION 2 (Précédente): Ajout du z-index 20000 pour que le preview s'affiche par-dessus le profil public */
         #preview-modal { background: #111; color: white; z-index: 20000; }
         
-        /* CORRECTION 1 (Actuelle) : La feuille de notation (overlay) doit être AU-DESSUS du preview (20000) */
         .sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 30000; opacity: 0; pointer-events: none; transition: 0.3s; }
         
         .sheet-overlay.open { opacity: 1; pointer-events: auto; }
@@ -932,13 +949,9 @@
     </div>
 
 <style>
-    /* CSS POUR LES NOUVELLES FONCTIONNALITÉS */
-    
-    /* 1. Filtres & Header */
     .filter-dropdown { background: #E5E5EA; border: none; padding: 6px 12px; border-radius: 12px; font-size: 13px; font-weight: 700; color: #000; outline: none; }
     .notif-btn { position: relative; font-size: 20px; color: #000; padding: 5px; cursor: pointer; }
     
-    /* MODIFICATION : Badge de notification */
     .notif-badge { 
         position: absolute; top: -5px; right: -5px; 
         width: 16px; height: 16px; 
@@ -949,30 +962,23 @@
     }
     .notif-badge.active { display: flex; }
 
-    /* 2. Date sur Grid */
     .grid-date-overlay { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.8); margin-bottom: 2px; }
 
-    /* 3. Profil Public */
     #public-profile-modal { background: var(--ios-bg); z-index: 9999; }
     
-    /* CORRECTION 2 (Précédente): Position de la flèche de retour descendue (top: 50px) */
     .back-btn-float { position: absolute; top: 50px; left: 20px; background: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 10; cursor: pointer; }
 
-    /* 4. Statistiques Toggle */
     .stats-toggle { background: #E5E5EA; border-radius: 10px; padding: 2px; display: inline-flex; margin-bottom: 20px; }
     .stats-toggle button { padding: 6px 16px; border-radius: 8px; font-size: 12px; font-weight: 700; border: none; background: transparent; color: #8E8E93; }
     .stats-toggle button.active { background: white; color: black; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-    /* 5. Notifications Page */
     .notif-item { background: white; padding: 16px; border-radius: 16px; margin-bottom: 10px; display: flex; gap: 12px; align-items: center; }
     .notif-icon { width: 40px; height: 40px; border-radius: 50%; background: #E5E5EA; display: flex; align-items: center; justify-content: center; font-size: 18px; }
 
-    /* 6. Up to date */
     .up-to-date { text-align: center; padding: 20px; margin: 20px 0; display: flex; align-items: center; justify-content: center; gap: 10px; color: #8E8E93; }
     .up-to-date-line { height: 1px; background: #E5E5EA; flex: 1; }
     .up-to-date-text { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
 
-    /* 7. Dropdown Abonnement */
     .following-dropdown { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: white; border-radius: 16px; margin-top: 10px; }
     .following-dropdown.open { max-height: 300px; padding: 10px 0; overflow-y: auto; }
     .follow-toggle-btn { background: white; padding: 15px; border-radius: 16px; width: 100%; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 14px; }
@@ -996,7 +1002,6 @@
         appId: "1:683284434520:web:0c72c547703843781f442d"
     };
 
-    // CORRECTION : Utilisation de getApp() pour récupérer l'instance authentifiée
     const app = getApp(); 
     const db = getFirestore(app);
     const appId = 'mabiblio-dc595';
@@ -1008,7 +1013,6 @@
         currentPublicUser: null
     };
 
-    // --- 1. MODIFICATION DU HEADER (Alignement Droite + Cloche) ---
     const headerTitle = document.querySelector('.header-title');
     const headerTabs = document.querySelector('.type-tabs');
     
@@ -1027,7 +1031,6 @@
     notifBtn.onclick = () => window.openNotifications();
     titleRow.appendChild(notifBtn);
 
-    // MODIF: Création d'un container Flex pour aligner Tabs et Filtre sur la même ligne
     const tabsContainer = document.createElement('div');
     tabsContainer.style.display = 'flex';
     tabsContainer.style.justifyContent = 'space-between';
@@ -1035,8 +1038,8 @@
     tabsContainer.style.marginTop = '15px';
     
     headerTabs.parentNode.insertBefore(tabsContainer, headerTabs);
-    tabsContainer.appendChild(headerTabs); // On déplace les onglets dedans
-    headerTabs.style.marginTop = '0'; // Reset margin
+    tabsContainer.appendChild(headerTabs); 
+    headerTabs.style.marginTop = '0'; 
 
     const filterContainer = document.createElement('div');
     filterContainer.innerHTML = `
@@ -1046,10 +1049,8 @@
             <option value="name">Nom</option>
         </select>
     `;
-    tabsContainer.appendChild(filterContainer); // On ajoute le select à droite
+    tabsContainer.appendChild(filterContainer); 
 
-
-    // --- 2. SURCHARGE DE RENDERLIST ---
     const originalRenderList = window.renderList;
     
     window.setSort = (val) => {
@@ -1067,7 +1068,12 @@
         } else if (window.extState.sort === 'name') {
             filtered.sort((a, b) => a.title.localeCompare(b.title));
         } else {
-            filtered.sort((a, b) => (b.finishDate || b.lastUpdate || 0) > (a.finishDate || a.lastUpdate || 0) ? 1 : -1);
+            // CORRECTION 2 : Priorité absolue au finishDate pour le tri
+            filtered.sort((a, b) => {
+                const dateA = a.finishDate || a.lastUpdate || 0;
+                const dateB = b.finishDate || b.lastUpdate || 0;
+                return dateB > dateA ? 1 : -1;
+            });
         }
 
         const container = document.getElementById('main-content');
@@ -1173,19 +1179,19 @@
         container.innerHTML = `<div class="pt-40 text-center"><i class="fa-solid fa-spinner fa-spin text-3xl text-gray-400"></i></div>`;
 
         try {
-            // Utilisation du DB authentifié
             const profSnap = await getDoc(doc(db, 'artifacts', appId, 'users', uid, 'profile', 'info'));
             if (!profSnap.exists()) throw new Error("User not found");
             const prof = profSnap.data();
             const itemsSnap = await getDocs(collection(db, 'artifacts', appId, 'users', uid, 'items'));
             const items = itemsSnap.docs.map(d => d.data());
 
-            // Check following status
             const isFollowing = (window.following || []).includes(uid);
 
             let html = `
                 <div class="pt-24 px-6 pb-32">
-                    <div class="text-center mb-8">
+                    <div class="text-center mb-8 relative">
+                        <div id="profile-toast" class="fixed top-24 left-1/2 -translate-x-1/2 bg-black/80 text-white px-6 py-3 rounded-full text-sm font-bold opacity-0 pointer-events-none transition-opacity duration-300 z-50"></div>
+                        
                         <div class="w-24 h-24 mx-auto rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-4xl overflow-hidden shadow-lg border-4 border-white">
                              ${prof.avatar ? `<img src="${prof.avatar}" class="w-full h-full object-cover">` : prof.name[0]}
                         </div>
@@ -1193,28 +1199,39 @@
                         <button onclick="window.toggleFollowFromProfile('${uid}')" class="${isFollowing ? 'bg-gray-200 text-black' : 'bg-blue-600 text-white'} px-6 py-2 rounded-full font-bold mt-3 text-sm transition-colors">
                             ${isFollowing ? 'Abonné' : 'S\'abonner'}
                         </button>
-                        <p class="text-gray-400 font-bold text-xs uppercase mt-4">${items.length} éléments dans la collection</p>
+                        <p class="text-gray-400 font-bold text-xs uppercase mt-4">${items.filter(i=> i.status === 'Vu' || i.status === 'Lu').length} éléments terminés</p>
                     </div>
-                    <div class="year-divider">Collection</div>
-                    <div class="items-grid">
             `;
-            
-            items.sort((a,b) => (b.finishDate || 0) > (a.finishDate || 0) ? 1 : -1);
-            items.forEach(item => {
-                 // CORRECTION 3 (Précédente): Ajout de onclick sur les items du profil public pour les importer
-                 const itemData = JSON.stringify(item).replace(/'/g, "&apos;");
-                 html += `
-                    <div class="grid-item" onclick='window.openPreview(${itemData})'>
-                        <img src="${item.img || ''}">
-                        ${item.rating ? `<div class="grid-rating">${item.rating}</div>` : ''}
-                        <div class="grid-item-overlay">
-                            <div class="text-[8px] font-black truncate text-white uppercase">${item.title}</div>
-                            <div class="text-[7px] text-gray-300 mt-1">${item.type}</div>
-                        </div>
-                    </div>
-                 `;
+
+            // CORRECTION 1 : Affichage UNIQUEMENT des éléments terminés (Vu/Lu)
+            const categories = ['Film', 'Série', 'Livre'];
+            categories.forEach(cat => {
+                // Filtre Strict: Type ET Status (Vu ou Lu) uniquement.
+                const catItems = items.filter(i => i.type === cat && (i.status === 'Vu' || i.status === 'Lu'));
+                
+                if(catItems.length > 0) {
+                     // Tri par date de fin
+                     catItems.sort((a,b) => (b.finishDate || 0) > (a.finishDate || 0) ? 1 : -1);
+                     
+                     html += `<div class="year-divider">${cat}s</div><div class="items-grid">`;
+                     catItems.forEach(item => {
+                         const itemData = JSON.stringify(item).replace(/'/g, "&apos;");
+                         html += `
+                            <div class="grid-item" onclick='window.openPreview(${itemData})'>
+                                <img src="${item.img || ''}">
+                                ${item.rating ? `<div class="grid-rating">${item.rating}</div>` : ''}
+                                <div class="grid-item-overlay">
+                                    <div class="text-[8px] font-black truncate text-white uppercase">${item.title}</div>
+                                    <div class="text-[7px] text-gray-300 mt-1">${item.finishDate || 'Non daté'}</div>
+                                </div>
+                            </div>
+                         `;
+                     });
+                     html += `</div>`;
+                }
             });
-            html += `</div></div>`;
+            
+            html += `</div>`;
             container.innerHTML = html;
 
         } catch (e) {
@@ -1227,20 +1244,27 @@
         if(!window.currentUser) return;
         const ref = doc(db, 'artifacts', appId, 'users', window.currentUser.uid, 'profile', 'info');
         
-        // CORRECTION 4 (Précédente): Suppression du push manuel pour éviter le conflit avec le snapshot
         const isFollowing = window.following.includes(uid);
         
         try {
             if (isFollowing) {
                 if(confirm("Ne plus suivre ?")) {
                     await updateDoc(ref, { following: arrayRemove(uid) });
-                    // On laisse le listener mettre à jour l'UI
-                    window.openPublicProfile(uid); // Rechargement simple du bouton
+                    window.openPublicProfile(uid); 
                 }
             } else {
                 await updateDoc(ref, { following: arrayUnion(uid) });
-                // On laisse le listener mettre à jour l'UI
-                window.openPublicProfile(uid); // Rechargement simple du bouton
+                // CORRECTION 4 : Notification visuelle via Toast au lieu d'alert()
+                const toast = document.getElementById('profile-toast');
+                if(toast) {
+                    toast.innerText = "Abonné avec succès !";
+                    toast.style.opacity = "1";
+                    setTimeout(() => {
+                        window.openPublicProfile(uid); 
+                    }, 1000);
+                } else {
+                    window.openPublicProfile(uid);
+                }
             }
         } catch (e) {
             console.error("Erreur follow:", e);
@@ -1279,8 +1303,7 @@
                     <div class="stats-toggle"><button onclick="window.toggleStatsMode('year')" class="${isYear?'active':''}">Cette Année</button><button onclick="window.toggleStatsMode('all')" class="${!isYear?'active':''}">Depuis toujours</button></div>
                 </div>
                 <div class="stat-card mb-8"><div class="font-black text-[10px] uppercase text-gray-400 mb-2">Total ${isYear ? curYear : 'Global'}</div><div class="text-2xl font-black text-blue-600">${filteredItems.length} terminés</div></div>
-                ${stats.map(s => { const showGoal = isYear; const prog = Math.min(100, (s.done / (s.goal || 1)) * 100); return `<div class="stat-card"><div class="flex items-center justify-between mb-4"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-white" style="background:${s.color}"><i class="fa-solid ${s.icon}"></i></div><div><div class="font-black text-sm">${s.type}s</div><div class="text-[10px] text-gray-400 font-bold uppercase">${s.done} ${showGoal ? `/ ${s.goal}` : 'Terminés'}</div></div></div>${showGoal ? `<input type="number" value="${s.goal}" onchange="window.updateGoal('${s.type}', this.value)" class="w-12 text-right bg-blue-50 text-blue-600 font-black rounded p-1 outline-none text-xs">` : ''}</div>${showGoal ? `<div class="h-2 bg-gray-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width: ${prog}%; background: ${s.color}"></div></div>` : ''}<div class="mt-4 flex justify-between text-[10px] font-bold text-gray-400 uppercase"><span>${s.sub}</span>${showGoal ? `<span class="text-black font-black">${Math.round(prog)}%</span>` : ''}</div></div>`; }).join('')}
-            </div>`;
+                ${stats.map(s => { const showGoal = isYear; const prog = Math.min(100, (s.done / (s.goal || 1)) * 100); return `<div class="stat-card"><div class="flex items-center justify-between mb-4"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl flex items-center justify-center text-white" style="background:${s.color}"><i class="fa-solid ${s.icon}"></i></div><div><div class="font-black text-sm">${s.type}s</div><div class="text-[10px] text-gray-400 font-bold uppercase">${s.done} ${showGoal ? `/ ${s.goal}` : 'Terminés'}</div></div></div>${showGoal ? `<input type="number" value="${s.goal}" onchange="window.updateGoal('${s.type}', this.value)" class="w-12 text-right bg-blue-50 text-blue-600 font-black rounded p-1 outline-none text-xs">` : ''}</div>${showGoal ? `<div class="h-2 bg-gray-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width: ${prog}%; background: ${s.color}"></div></div>` : ''}<div class="mt-4 flex justify-between text-[10px] font-bold text-gray-400 uppercase"><span>${s.sub}</span>${showGoal ? `<span class="text-black font-black">${Math.round(prog)}%</span>` : ''}</div></div>`; }).join('')}</div>`;
     };
 
     window.handleCommentLike = async (actId, commentTimestamp) => {
@@ -1290,7 +1313,6 @@
             if (snap.exists()) {
                 const data = snap.data();
                 const comments = data.comments || [];
-                // Trouver le commentaire (on utilise le timestamp comme ID unique)
                 const cIndex = comments.findIndex(c => c.timestamp === commentTimestamp);
                 
                 if (cIndex > -1) {
@@ -1307,7 +1329,6 @@
                     comment.likes = likes;
                     comments[cIndex] = comment;
                     
-                    // Utilisation de updateDoc importé correctement dans ce module
                     await updateDoc(actRef, { comments: comments });
                 }
             }
@@ -1316,175 +1337,10 @@
         }
     };
 
-    window.renderSocialFeed = () => {
-        // MODIF TASK 4 (Précédente): SAUVEGARDER L'ETAT DE L'INPUT (FOCUS + VALEUR)
-        const focusedId = document.activeElement ? document.activeElement.id : null;
-        const focusedVal = focusedId ? document.activeElement.value : null;
-
-        const container = document.getElementById('main-content');
-        
-        let badgeCount = 0;
-        const lastCheck = parseInt(localStorage.getItem('mabiblio_last_check') || '0');
-        const myPosts = window.socialFeed.filter(a => a.userId === window.currentUser.uid);
-        
-        // Le calcul local est fait ici aussi pour le rendu, mais le badge header est géré globalement désormais
-        
-        const searchBlock = `
-            <div class="relative mb-8">
-                <div class="flex gap-2">
-                    <input id="follow-id" placeholder="ID ami..." class="flex-1 bg-white p-4 rounded-2xl shadow-sm outline-none font-medium">
-                    <button onclick="window.followUser()" class="bg-blue-600 text-white px-6 rounded-2xl font-black relative overflow-hidden">
-                        Suivre
-                    </button>
-                </div>
-                <div id="follow-success" class="hidden absolute -bottom-6 left-0 text-green-500 text-[10px] font-black uppercase tracking-wider"></div>
-            </div>
-        `;
-
-        let feedHtml = '';
-        let hasShownUpToDate = false;
-
-        // MODIF TASK 2 (Précédente): SÉPARATEUR "VOUS ÊTES À JOUR"
-        window.socialFeed.forEach(act => {
-            // Insérer la ligne "À jour" dès qu'on tombe sur un post plus vieux que lastCheck
-            if (!hasShownUpToDate && act.timestamp < lastCheck && lastCheck > 0) {
-                 feedHtml += `<div class="up-to-date"><div class="up-to-date-line"></div><div class="up-to-date-text">Vous êtes à jour</div><div class="up-to-date-line"></div></div>`;
-                 hasShownUpToDate = true;
-            } else if (!hasShownUpToDate && act.timestamp >= lastCheck && feedHtml === '') {
-                 // Si c'est le tout premier élément et qu'il est récent, on peut mettre un petit header "Nouveau"
-                 feedHtml += `<div class="up-to-date"><div class="up-to-date-line"></div><div class="up-to-date-text text-blue-600">Nouveaux Posts</div><div class="up-to-date-line"></div></div>`;
-            }
-
-            feedHtml += `
-            <div class="activity-card relative">
-                ${act.userId === window.currentUser.uid ? `<button onclick="window.deleteActivity('${act.id}')" class="absolute top-5 right-5 text-gray-300 hover:text-red-500 transition-colors"><i class="fa-solid fa-trash-can"></i></button>` : ''}
-                <div class="flex items-center gap-3 mb-4 cursor-pointer" onclick="window.openPublicProfile('${act.userId}')">
-                    <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-black overflow-hidden">
-                        ${act.userAvatar ? `<img src="${act.userAvatar}" class="w-full h-full object-cover">` : (act.userName ? act.userName[0] : '?')}
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-black text-sm hover:underline">${act.userName}</span>
-                        <span class="text-[9px] text-gray-400 font-bold uppercase">${new Date(act.timestamp).toLocaleDateString()}</span>
-                    </div>
-                </div>
-                <div class="flex gap-4 bg-gray-50 rounded-2xl p-3 mb-3" onclick='window.openPreview({"id":"${act.type}_ext","title":"${act.itemTitle}","img":"${act.itemImg}","type":"${act.type}","desc":"Vu par ${act.userName}"})'>
-                    <img src="${act.itemImg}" class="w-14 h-20 rounded-lg object-cover bg-gray-200">
-                    <div class="flex-1">
-                        <div class="font-black text-xs mb-1">${act.itemTitle}</div>
-                        <div class="text-orange-500 font-black text-xs">★ ${act.rating}</div>
-                        <p class="mt-2 text-gray-600 text-[11px] italic">"${act.comment || ''}"</p>
-                    </div>
-                </div>
-                <div class="flex gap-2 border-b pb-3 mb-4">
-                    ${['💙', '🤣', '😢', '✨'].map(emoji => `<button onclick="window.addEmojiReaction('${act.id}', '${emoji}')" class="emoji-btn ${(act.reactions?.[emoji] || []).includes(window.currentUser?.uid) ? 'active' : ''}">${emoji} <span>${(act.reactions?.[emoji] || []).length || ''}</span></button>`).join('')}
-                </div>
-                
-                ${act.comments && act.comments.length > 0 ? `<div class="flex flex-col gap-3 mb-4 px-1">
-                    ${act.comments.map(c => {
-                        const likes = c.likes || [];
-                        const isLiked = likes.includes(window.currentUser.uid);
-                        return `
-                        <div class="flex gap-2 items-start">
-                             <div class="w-6 h-6 shrink-0 rounded-full bg-gray-300 text-[10px] flex items-center justify-center font-bold text-white overflow-hidden cursor-pointer border border-white shadow-sm" onclick="window.openPublicProfile('${c.userId}')">
-                                 ${c.userAvatar ? `<img src="${c.userAvatar}" class="w-full h-full object-cover">` : (c.userName ? c.userName[0] : '?')}
-                             </div>
-                             <div class="bg-gray-100 rounded-xl rounded-tl-none p-2 flex-1 group relative">
-                                <div class="font-bold text-[10px] cursor-pointer hover:underline" onclick="window.openPublicProfile('${c.userId}')">${c.userName}</div>
-                                <div class="text-[11px] text-gray-700 leading-tight">${c.text}</div>
-                                <button onclick="window.handleCommentLike('${act.id}', ${c.timestamp})" class="absolute right-2 bottom-1 text-[10px] ${isLiked ? 'text-red-500' : 'text-gray-300'}"><i class="fa-${isLiked ? 'solid' : 'regular'} fa-heart"></i> ${likes.length > 0 ? likes.length : ''}</button>
-                             </div>
-                        </div>
-                    `}).join('')}
-                </div>` : ''}
-
-                <div class="flex gap-2">
-                    <input id="comment-in-${act.id}" placeholder="Répondre..." class="flex-1 bg-gray-100 p-2.5 rounded-xl text-[12px] outline-none">
-                    <button onclick="window.postComment('${act.id}')" class="bg-blue-600 text-white w-10 h-10 rounded-xl flex items-center justify-center"><i class="fa-solid fa-paper-plane text-xs"></i></button>
-                </div>
-            </div>`
-        });
-
-        // Si on a tout affiché et qu'on n'a pas mis le séparateur, c'est que tout est nouveau ou tout est vieux (cas edge), on met à la fin si besoin.
-        if (!hasShownUpToDate && window.socialFeed.length > 0) {
-             feedHtml += `<div class="up-to-date"><div class="up-to-date-line"></div><div class="up-to-date-text">Vous êtes à jour</div><div class="up-to-date-line"></div></div>`;
-        }
-
-        container.innerHTML = `<div class="pt-20 px-5 pb-32"><h1 class="text-4xl font-black mb-6">Amis</h1>
-        ${searchBlock}
-        ${feedHtml}
-        </div>`;
-
-        // MODIF TASK 4 (Précédente): RESTAURER L'INPUT FOCUS
-        if(focusedId) {
-            const el = document.getElementById(focusedId);
-            if(el) {
-                el.value = focusedVal;
-                el.focus();
-            }
-        }
-    };
-
-    window.openNotifications = async () => {
-        window.currentView = 'notifications';
-        document.getElementById('app-header').style.display = 'none'; 
-        
-        // --- MODIFICATION TASK 1 (Précédente) : RESET CLOCHE IMMEDIAT ---
-        localStorage.setItem('mabiblio_last_check', Date.now());
-        if(window.updateNotifBadge) window.updateNotifBadge(); // Force UI update immediately
-
-        const myActivities = window.socialFeed.filter(a => a.userId === window.currentUser.uid);
-        let notifs = [];
-
-        // MODIF : Récupération du Nom de l'ami via window.followingData
-        const getName = (uid) => {
-             const f = window.followingData.find(u => u.uid === uid);
-             return f ? f.name : "Un ami";
-        }
-
-        myActivities.forEach(act => {
-            if (act.reactions) {
-                Object.keys(act.reactions).forEach(emoji => {
-                    act.reactions[emoji].forEach(uid => {
-                        if (uid !== window.currentUser.uid) {
-                            notifs.push({ type: 'like', text: `a réagi ${emoji} à votre post`, item: act.itemTitle, time: act.timestamp, user: getName(uid), uid: uid });
-                        }
-                    });
-                });
-            }
-            if (act.comments) {
-                act.comments.forEach(c => {
-                    if (c.userId !== window.currentUser.uid) {
-                        notifs.push({ type: 'comment', text: `a commenté : "${c.text}"`, item: act.itemTitle, time: c.timestamp, user: c.userName, uid: c.userId });
-                    }
-                });
-            }
-        });
-
-        notifs.sort((a,b) => b.time - a.time);
-
-        const container = document.getElementById('main-content');
-        container.innerHTML = `
-            <div class="pt-10 px-6 pb-32">
-                <div class="flex items-center gap-4 mb-6">
-                    <button onclick="window.switchView('home')" class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center"><i class="fa-solid fa-arrow-left"></i></button>
-                    <h1 class="text-3xl font-black">Activité</h1>
-                </div>
-                ${notifs.length === 0 ? '<div class="opacity-40 text-center mt-20 font-bold">Rien pour le moment</div>' : ''}
-                ${notifs.map(n => `
-                    <div class="notif-item cursor-pointer" onclick="window.openPublicProfile('${n.uid}')">
-                        <div class="notif-icon text-blue-600">${n.type === 'like' ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-solid fa-comment"></i>'}</div>
-                        <div class="flex-1">
-                            <div class="text-sm"><span class="font-black">${n.user}</span> ${n.text}</div>
-                            <div class="text-[10px] text-gray-400 font-bold uppercase mt-1">Sur ${n.item}</div>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-    };
-
     console.log("MaBiblio Extensions v3.6 Chargées");
+    // CORRECTION 3 (Bug démarrage): Appel explicite des pills et de la liste au démarrage
     if(window.currentUser) {
+        window.renderPills();
         window.renderList();
     }
 </script>
