@@ -102,7 +102,42 @@
         .mention-suggestions { position: absolute; bottom: 60px; left: 10px; right: 10px; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 31000; max-height: 150px; overflow-y: auto; display: none; }
         .suggestion-item { padding: 12px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #F2F2F7; }
         .suggestion-item:last-child { border-bottom: none; }
+
+        /* --- STYLE DES FAVORIS (PINNED) --- */
+.pinned-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+    margin-bottom: 24px;
+}
+.pinned-item {
+    aspect-ratio: 2/3;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    border: 2px dashed #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.pinned-item:active { transform: scale(0.95); }
+.pinned-item.filled { border: none; background: black; }
+.pinned-item img { width: 100%; height: 100%; object-fit: cover; }
+.pinned-overlay {
+    position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    display: flex; align-items: flex-end; justify-content: center; padding: 8px;
+    opacity: 0; transition: opacity 0.2s;
+}
+.pinned-item.filled:hover .pinned-overlay { opacity: 1; }
+.bio-text { font-size: 14px; color: #4b5563; margin-top: 8px; line-height: 1.4; padding: 0 20px; font-style: italic; }
     </style>
+
+
 </head>
 <body>
 
@@ -134,8 +169,9 @@
     </div>
 
     <div class="app-shell">
-        <header id="app-header">
+        <header id="app-header" class="relative">
             <div class="header-title">Ma Biblio</div>
+            
             <div class="type-tabs">
                 <div class="type-tab active" id="tab-Film" onclick="window.switchType('Film')">Films</div>
                 <div class="type-tab" id="tab-Livre" onclick="window.switchType('Livre')">Livres</div>
@@ -157,7 +193,11 @@
 
     <div id="search-modal" class="modal flex flex-col">
         <div class="pt-14 px-5 py-4 border-b bg-white flex justify-between items-center"><h2 class="text-xl font-black">Ajouter</h2><button onclick="window.closeSearchModal()" class="text-blue-600 font-bold">Fermer</button></div>
-        <div class="p-4 bg-white flex gap-2"><button id="s-Film" onclick="window.setSearchType('Film')" class="flex-1 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-sm">Film</button><button id="s-Livre" onclick="window.setSearchType('Livre')" class="flex-1 py-2.5 rounded-xl bg-gray-100 font-bold text-sm">Livre</button><button id="s-Série" onclick="window.setSearchType('Série')" class="flex-1 py-2.5 rounded-xl bg-gray-100 font-bold text-sm">Série</button></div>
+        <div class="p-4 bg-white flex gap-2">
+            <button id="s-Film" onclick="window.setSearchType('Film')" class="flex-1 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-sm">Film</button>
+            <button id="s-Livre" onclick="window.setSearchType('Livre')" class="flex-1 py-2.5 rounded-xl bg-gray-100 font-bold text-sm">Livre</button>
+            <button id="s-Série" onclick="window.setSearchType('Série')" class="flex-1 py-2.5 rounded-xl bg-gray-100 font-bold text-sm">Série</button>
+        </div>
         <div class="px-4 pb-4 bg-white flex flex-col gap-3">
             <div class="relative"><i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" id="search-input" placeholder="Rechercher..." class="w-full p-3.5 pl-11 bg-gray-100 rounded-2xl outline-none font-medium" oninput="window.handleSearch(this.value)"></div>
             <button onclick="window.openManualModal()" class="text-blue-600 font-bold text-sm bg-blue-50 py-3 rounded-xl">Créer manuellement</button>
@@ -168,9 +208,28 @@
     <div id="manual-modal" class="modal flex flex-col">
         <div class="pt-14 px-5 py-4 border-b bg-white flex justify-between items-center"><h2 class="text-xl font-black">Ajout Manuel</h2><button onclick="window.closeManualModal()" class="text-blue-600 font-bold">Annuler</button></div>
         <div class="p-6 overflow-y-auto flex-1">
-            <div class="flex gap-4 mb-6"><div class="w-1/3"><label class="manual-image-upload" id="manual-preview-container"><i class="fa-solid fa-plus"></i><span class="text-[10px] text-gray-400 font-black uppercase">Photo</span><input type="file" accept="image/*" class="hidden" onchange="window.handleManualImageUpload(event)"></label></div><div class="flex-1 flex flex-col gap-3"><input type="text" id="m-title" placeholder="Titre" class="w-full p-3.5 rounded-xl bg-white border border-gray-100 outline-none font-bold text-sm"><select id="m-type" class="w-full p-3.5 rounded-xl bg-white border border-gray-100 outline-none font-bold text-sm"><option value="Film">Film</option><option value="Livre">Livre</option><option value="Série">Série</option></select></div></div>
-            <div class="ios-group !mx-0"><div class="ios-cell"><span class="font-bold text-sm">Valeur (pages/min/saisons)</span><input type="number" id="m-metric" value="0" class="w-20 text-right bg-transparent font-black text-blue-600 outline-none"></div></div>
-            <textarea id="m-desc" placeholder="Résumé" class="w-full bg-white p-4 rounded-xl border border-gray-100 h-24 outline-none mb-6 font-medium text-sm"></textarea>
+            <div class="flex gap-4 mb-6">
+                <div class="w-1/3">
+                    <label class="manual-image-upload" id="manual-preview-container">
+                        <i class="fa-solid fa-plus"></i><span class="text-[10px] text-gray-400 font-black uppercase">Photo</span>
+                        <input type="file" accept="image/*" class="hidden" onchange="window.handleManualImageUpload(event)">
+                    </label>
+                </div>
+                <div class="flex-1 flex flex-col gap-3">
+                    <input type="text" id="m-title" placeholder="Titre" class="w-full p-3.5 rounded-xl bg-white border border-gray-100 outline-none font-bold text-sm">
+                    <select id="m-type" class="w-full p-3.5 rounded-xl bg-white border border-gray-100 outline-none font-bold text-sm">
+                        <option value="Film">Film</option>
+                        <option value="Livre">Livre</option>
+                        <option value="Série">Série</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="ios-group !mx-0">
+                <div class="ios-cell"><span class="font-bold text-sm">Valeur (pages/min/saisons)</span><input type="number" id="m-metric" value="0" class="w-20 text-right bg-transparent font-black text-blue-600 outline-none"></div>
+            </div>
+
+            <textarea id="m-desc" placeholder="Résumé" class="w-full bg-white p-4 rounded-xl border border-gray-100 h-24 outline-none mb-6 mt-6 font-medium text-sm"></textarea>
             <button onclick="window.confirmManualAdd()" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-black text-lg">Suivant</button>
         </div>
     </div>
@@ -266,6 +325,19 @@
             <div id="fb-status" class="text-center mt-4 text-sm font-bold text-gray-400 hidden">Envoi en cours...</div>
         </div>
     </div>
+    <div id="pin-selector-modal" class="modal flex flex-col">
+    <div class="pt-14 px-5 py-4 border-b bg-white flex justify-between items-center">
+        <h2 class="text-xl font-black">Choisir un favori</h2>
+        <button onclick="document.getElementById('pin-selector-modal').classList.remove('open')" class="text-blue-600 font-bold">Annuler</button>
+    </div>
+    <div class="p-4 bg-gray-50">
+        <input type="text" id="pin-search" placeholder="Rechercher dans ma collection..." class="w-full p-3 rounded-xl border border-gray-200 outline-none font-bold text-sm" oninput="window.filterPinSelector(this.value)">
+    </div>
+    <div class="flex-1 overflow-y-auto p-4" id="pin-selector-list">
+        </div>
+</div>
+
+    </body>
 
     <script type="module">
         
@@ -276,7 +348,8 @@
         /* --- A.1 IMPORTS DES MODULES --- */
         import { initializeApp, getApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, where, getDocs, collectionGroup, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // AJOUT DE 'limit' et 'orderBy' POUR LA RECHERCHE ET LE TRI
+        import { getFirestore, doc, setDoc, getDoc, collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, where, getDocs, collectionGroup, writeBatch, limit, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         /* --- A.2 CONFIGURATION DU PROJET --- */
         const firebaseConfig = {
@@ -292,7 +365,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = 'mabiblio-dc595'; 
+        const appId = 'mabiblio-dc595';
 
        // -----------------------------------------------------------
         // B. ETAT GLOBAL DE L'APPLICATION
@@ -1169,43 +1242,84 @@
             input.value = "";
         };
 
-        /* --- 4. GESTION ABONNEMENTS & NAVIGATION SOCIALE --- */
-        window.followUser = async () => {
-            let val = document.getElementById('follow-id').value;
-            if (val) val = val.replace(/[^a-zA-Z0-9 àâäéèêëîïôöùûüçÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ\-\_\.]/g, "").trim();
+       /* --- 4. GESTION ABONNEMENTS & NAVIGATION SOCIALE --- */
+        
+        // --- A. MOTEUR DE RECHERCHE "FUZZY" (INTELLIGENT) ---
+        
+        window.handleUserSearch = async (val) => {
+            // On cible le conteneur de résultats (qu'il soit dans une modale ou dans la page)
+            const container = document.getElementById('user-search-results');
+            if (!container) return;
 
-            if (val && val !== window.userProfile.name) {
-                try {
-                    const q = query(collectionGroup(db, 'profile'), where('name', '==', val));
-                    const querySnapshot = await getDocs(q);
-
-                    if (!querySnapshot.empty) {
-                        const targetUserDoc = querySnapshot.docs[0].data();
-                        const targetUid = targetUserDoc.uid;
-
-                        if (targetUid && targetUid !== window.currentUser.uid) {
-                            window.followFeedback = { type: 'success', msg: `✓ ${val} ajouté !` };
-                            await updateDoc(doc(db, 'artifacts', appId, 'users', window.currentUser.uid, 'profile', 'info'), { following: arrayUnion(targetUid) });
-                            window.renderSocialFeed();
-                            setTimeout(() => { window.followFeedback = null; const el = document.getElementById('follow-success'); if(el) el.classList.add('hidden'); }, 3000);
-                        } else {
-                            window.followFeedback = { type: 'error', msg: "✕ C'est vous !" }; window.renderSocialFeed();
-                        }
-                    } else {
-                        window.followFeedback = { type: 'error', msg: "✕ Pseudo introuvable" }; window.renderSocialFeed();
-                    }
-                } catch (e) {
-                    console.error("ERREUR AJOUT AMI :", e);
-                    window.followFeedback = { type: 'error', msg: "✕ Erreur technique" }; window.renderSocialFeed();
-                }
+            val = val.trim().toLowerCase(); // On met tout en minuscule pour comparer
+            
+            if (!val) {
+                container.innerHTML = '<div class="text-center text-gray-400 mt-4 text-sm">Cherchez un ami...</div>';
+                return;
             }
-            document.getElementById('follow-id').value = "";
+
+            // Petit spinner discret
+            container.innerHTML = `<div class="text-center mt-6"><i class="fa-solid fa-spinner fa-spin text-blue-600"></i></div>`;
+
+            try {
+                // STRATÉGIE "FUZZY" : 
+                // 1. On récupère les 100 derniers profils actifs (ou tout le monde si petite app)
+                // 2. On filtre en JavaScript pour être souple (insensible à la casse, partie du mot...)
+                const q = query(collectionGroup(db, 'profile'), limit(100));
+                const snapshot = await getDocs(q);
+                
+                const allUsers = snapshot.docs.map(doc => doc.data());
+                
+                // Le filtre magique : convertit les deux en minuscules et vérifie si ça "contient" le texte
+                const matches = allUsers.filter(u => 
+                    u.name && 
+                    u.name.toLowerCase().includes(val) && 
+                    u.uid !== window.currentUser.uid
+                );
+                
+                if (matches.length === 0) {
+                    container.innerHTML = '<div class="text-center text-gray-400 mt-4 text-sm font-bold">Aucun utilisateur trouvé.</div>';
+                    return;
+                }
+
+                // Rendu des résultats
+                container.innerHTML = matches.map(u => {
+                    const isFollowing = (window.following || []).includes(u.uid);
+                    // On échappe les caractères pour éviter les bugs d'affichage
+                    const safeName = u.name.replace(/'/g, "&apos;");
+                    const safeUid = u.uid;
+
+                    return `
+                    <div class="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-xl mb-2 shadow-sm" onclick="window.openPublicProfile('${safeUid}')">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-blue-50 overflow-hidden flex items-center justify-center border border-gray-100">
+                                ${u.avatar ? `<img src="${u.avatar}" class="w-full h-full object-cover">` : `<span class="font-black text-blue-600 text-xs">${safeName[0]}</span>`}
+                            </div>
+                            <div class="flex flex-col text-left">
+                                <span class="font-bold text-sm text-gray-900 leading-tight">${safeName}</span>
+                                <span class="text-[10px] text-gray-400 font-medium">Membre</span>
+                            </div>
+                        </div>
+                        <div class="text-xs font-bold px-3 py-1 rounded-full ${isFollowing ? 'bg-green-100 text-green-600' : 'bg-blue-600 text-white'}">
+                            ${isFollowing ? 'Abonné' : 'Suivre'}
+                        </div>
+                    </div>`;
+                }).join('');
+
+            } catch (e) {
+                console.error("Erreur recherche:", e);
+                container.innerHTML = '<div class="text-center text-red-400 mt-4 text-xs">Erreur de chargement.</div>';
+            }
         };
+
+        // --- B. UTILITAIRES ---
+        // (Note: Les fonctions de modale open/closeUserSearchModal sont supprimées 
+        // car nous allons intégrer la recherche directement dans la page ci-dessous)
 
         window.updateNotifBadge = () => {
             const badge = document.getElementById('notif-badge');
             if (!badge) return;
-            const count = window.extState.notifications.filter(n => !n.read).length;
+            const count = (window.extState && window.extState.notifications) ? window.extState.notifications.filter(n => !n.read).length : 0;
 
             if(count > 0) {
                 badge.innerText = count > 9 ? '9+' : count;
@@ -1222,132 +1336,189 @@
                 const el = document.getElementById('act-' + actId);
                 if(el) { 
                     el.scrollIntoView({behavior: 'smooth', block: 'center'});
-                    el.style.transition = "transform 0.3s";
-                    el.style.transform = "scale(0.96)";
-                    setTimeout(() => el.style.transform = "scale(1)", 300);
                 }
             }, 600); 
         };
+        
+        // Ancienne fonction conservée pour éviter les erreurs si appelée ailleurs
+        window.followUser = async () => {};
 
         /* ==================================================================
            H.2 : SOCIAL - FEED & NOTIFICATIONS
            Affichage du fil d'actualité et Centre de notifications
            ================================================================== */
 
-        /* --- 1. RENDU DU FIL D'ACTUALITÉ (FEED) --- */
+      /* --- 1. RENDU DU FIL D'ACTUALITÉ (FEED) --- */
         window.renderSocialFeed = () => {
-            // Sauvegarde du focus pour ne pas perdre la saisie dans le champ recherche
             const focusedId = document.activeElement ? document.activeElement.id : null;
             const focusedVal = focusedId ? document.activeElement.value : null;
-
             const container = document.getElementById('main-content');
-            const feedbackActive = window.followFeedback !== null;
-            const feedbackMsg = window.followFeedback?.msg || '';
-            const feedbackColor = window.followFeedback?.type === 'error' ? 'text-red-500' : 'text-green-500';
-
-            // Bloc de recherche d'amis
+            
+            // Bloc Recherche
             const searchBlock = `
                 <div class="relative mb-8">
-                    <div class="flex gap-2">
-                        <input id="follow-id" placeholder="Pseudo ami..." class="flex-1 bg-white p-4 rounded-2xl shadow-sm outline-none font-medium">
-                        <button onclick="window.followUser()" class="bg-blue-600 text-white px-6 rounded-2xl font-black relative overflow-hidden">Suivre</button>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm flex items-center gap-3 border border-gray-100">
+                        <i class="fa-solid fa-magnifying-glass text-gray-400 ml-2"></i>
+                        <input id="user-search-input" type="text" placeholder="Chercher un ami..." class="flex-1 bg-transparent outline-none font-bold text-sm text-gray-800 placeholder-gray-400" oninput="window.handleUserSearch(this.value)">
                     </div>
-                    <div id="follow-success" class="${feedbackActive ? '' : 'hidden'} absolute -bottom-6 left-0 ${feedbackColor} text-[10px] font-black uppercase tracking-wider">${feedbackMsg}</div>
+                    <div id="user-search-results" class="mt-2"></div>
                 </div>
             `;
 
             let feedHtml = '';
             
-            // Boucle sur chaque activité
-            window.socialFeed.forEach(act => {
-                const likes = act.likes || [];
-                const isLiked = likes.includes(window.currentUser.uid);
-                const commentsCount = (act.comments || []).length;
-                let likesText = likes.length > 0 ? (likes.length === 1 ? `Aimé par 1 personne` : `Aimé par ${likes.length} personnes`) : 'Soyez le premier à aimer';
+            if (window.socialFeed && window.socialFeed.length > 0) {
+                const sortedFeed = [...window.socialFeed].sort((a,b) => b.timestamp - a.timestamp);
 
-                // Génération des petites têtes de likes
-                let facesHtml = '';
-                if(likes.length > 0) {
-                    const firstLikers = likes.slice(0, 3);
-                    facesHtml = '<div class="flex -space-x-2 mr-2">';
-                    firstLikers.forEach(uid => {
-                        let avatarUrl = '';
-                        if(uid === window.currentUser.uid) { avatarUrl = window.userProfile.avatar; } 
-                        else { const friend = window.followingData.find(u => u.uid === uid || u.id === uid); if(friend) avatarUrl = friend.avatar; }
-                        
-                        if(avatarUrl) { facesHtml += `<img src="${avatarUrl}" class="w-5 h-5 rounded-full border border-white object-cover">`; } 
-                        else { facesHtml += `<div class="w-5 h-5 rounded-full border border-white bg-gray-200 flex items-center justify-center text-[8px] text-gray-500"><i class="fa-solid fa-user"></i></div>`; }
-                    });
-                    facesHtml += '</div>';
-                }
-
-                // Données pour l'aperçu cliquable
-                const previewData = {
-                    id: act.id + '_public',
-                    title: act.itemTitle,
-                    img: act.itemImg,
-                    type: act.type,
-                    metricValue: act.metricValue || 0,
-                    desc: act.itemDesc || `Noté ${act.rating}/10 par ${act.userName}. ${act.comment || ''}`,
-                    platform: act.platform, 
-                    releaseDate: null 
-                };
-                const previewJson = JSON.stringify(previewData).replace(/'/g, "&apos;");
-                const platformBadge = act.platform ? `<span class="ml-2 opacity-50 font-normal text-[10px]">• ${act.platform}</span>` : '';
-
-                feedHtml += `
-                <div class="activity-card relative" id="act-${act.id}">
-                    ${act.userId === window.currentUser.uid ? `<button onclick="window.deleteActivity('${act.id}')" class="absolute top-5 right-5 text-gray-300 hover:text-red-500 transition-colors"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+                sortedFeed.forEach(act => {
+                    const likes = act.likes || [];
+                    const isLiked = likes.includes(window.currentUser.uid);
+                    const commentsCount = (act.comments || []).length;
                     
-                    <div class="flex items-center gap-3 mb-4 cursor-pointer" onclick="window.openPublicProfile('${act.userId}')">
-                        <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-black overflow-hidden border border-gray-100">
-                            ${act.userAvatar ? `<img src="${act.userAvatar}" class="w-full h-full object-cover">` : (act.userName ? act.userName[0] : '?')}
+                    let typeIcon = 'fa-film';
+                    if (act.type === 'Livre') typeIcon = 'fa-book';
+                    if (act.type === 'Série') typeIcon = 'fa-tv';
+
+                    // Texte des likes
+                    let likesText = likes.length > 0 ? (likes.length === 1 ? `1 J'aime` : `${likes.length} J'aime`) : 'J\'aime';
+
+                    // Têtes des likeurs
+                    let facesHtml = '';
+                    if(likes.length > 0) {
+                        const firstLikers = likes.slice(0, 3);
+                        facesHtml = '<div class="flex -space-x-2 mr-2">';
+                        firstLikers.forEach(uid => {
+                            let avatarUrl = '';
+                            if(uid === window.currentUser.uid) { avatarUrl = window.userProfile.avatar; } 
+                            else { const friend = (window.followingData || []).find(u => u.uid === uid || u.id === uid); if(friend) avatarUrl = friend.avatar; }
+                            
+                            if(avatarUrl) { facesHtml += `<img src="${avatarUrl}" class="w-5 h-5 rounded-full border border-white object-cover">`; } 
+                            else { facesHtml += `<div class="w-5 h-5 rounded-full border border-white bg-gray-200 flex items-center justify-center text-[8px] text-gray-500"><i class="fa-solid fa-user"></i></div>`; }
+                        });
+                        facesHtml += '</div>';
+                    }
+
+                    const previewData = {
+                        id: act.id + '_public', title: act.itemTitle, img: act.itemImg, type: act.type, metricValue: act.metricValue || 0,
+                        desc: act.itemDesc || `Noté ${act.rating}/10 par ${act.userName}. ${act.comment || ''}`, platform: act.platform, releaseDate: null 
+                    };
+                    const previewJson = JSON.stringify(previewData).replace(/'/g, "&apos;");
+                    const platformBadge = act.platform ? `<span class="opacity-50 font-normal ml-1">• ${act.platform}</span>` : '';
+
+                    // --- STRUCTURE CARTE BLANCHE UNIQUE (CORRIGÉE) ---
+                    feedHtml += `
+                    <div class="bg-white rounded-2xl p-5 mb-6 shadow-sm border border-gray-50" id="act-${act.id}">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center gap-3 cursor-pointer" onclick="window.openPublicProfile('${act.userId}')">
+                                <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-black overflow-hidden border border-white shadow-sm">
+                                    ${act.userAvatar ? `<img src="${act.userAvatar}" class="w-full h-full object-cover">` : (act.userName ? act.userName[0] : '?')}
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-sm text-gray-900 leading-tight">${act.userName}</span>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="text-[10px] text-gray-400 font-bold uppercase">${new Date(act.timestamp).toLocaleDateString()}</span>
+                                        <span class="bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded text-[9px] font-black uppercase flex items-center gap-1">
+                                            <i class="fa-solid ${typeIcon}"></i> ${act.type} ${platformBadge}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            ${act.userId === window.currentUser.uid ? `<button onclick="window.deleteActivity('${act.id}')" class="text-gray-300 hover:text-red-500 p-2"><i class="fa-solid fa-trash-can text-xs"></i></button>` : ''}
                         </div>
-                        <div class="flex flex-col">
-                            <span class="font-black text-sm hover:underline">${act.userName}</span>
-                            <div class="text-[9px] text-gray-400 font-bold uppercase flex items-center">
-                                ${new Date(act.timestamp).toLocaleDateString()}
-                                ${platformBadge}
+
+                        <div class="flex gap-4 bg-gray-50 rounded-xl p-3 mb-4 cursor-pointer group hover:bg-gray-100 transition-colors" onclick='window.openPreview(${previewJson})'>
+                            <div class="relative w-16 h-24 rounded-lg overflow-hidden shadow-sm group-active:scale-95 transition-transform">
+                                <img src="${act.itemImg}" class="w-full h-full object-cover bg-gray-200">
+                                <div class="absolute top-1 right-1 bg-black/60 text-white text-[9px] font-black px-1.5 py-0.5 rounded backdrop-blur-sm">${act.rating}</div>
+                            </div>
+                            <div class="flex-1 py-1">
+                                <h3 class="font-black text-sm text-gray-900 leading-tight mb-1">${act.itemTitle}</h3>
+                                <p class="text-xs text-gray-500 line-clamp-3 leading-relaxed">${act.comment ? `<span class="italic text-gray-600">"${act.comment}"</span>` : '<span class="opacity-50">A noté cette œuvre.</span>'}</p>
                             </div>
                         </div>
-                    </div>
+                        
+                        <div class="flex items-center justify-between pl-1 pr-1 border-t border-gray-50 pt-3">
+                            <div class="flex items-center gap-4">
+                                <button onclick="window.toggleLike('${act.id}')" class="flex items-center gap-2 transition-all active:scale-90 group">
+                                    <i class="${isLiked ? 'fa-solid text-red-500' : 'fa-regular text-gray-400'} fa-heart text-xl group-hover:text-red-400"></i>
+                                </button>
+                                <button onclick="window.openCommentModal('${act.id}')" class="flex items-center gap-2 text-gray-400 hover:text-blue-500 transition-colors">
+                                    <i class="fa-regular fa-comment text-xl"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="flex items-center gap-3">
+                                ${likes.length > 0 ? `
+                                    <div class="flex items-center cursor-pointer hover:opacity-70 transition-opacity" onclick="window.showLikesList('${act.id}')">
+                                        ${facesHtml}
+                                        <span class="text-[10px] font-bold text-gray-500 ml-2 hover:underline">${likesText}</span>
+                                    </div>
+                                ` : ''}
+                                
+                                ${commentsCount > 0 ? `<span class="text-[10px] font-bold text-gray-400 cursor-pointer hover:text-blue-600" onclick="window.openCommentModal('${act.id}')">${commentsCount} com.</span>` : ''}
+                            </div>
+                        </div>
+                    </div>`
+                });
+                
+                container.innerHTML = `<div class="pt-24 px-5 pb-32"><h1 class="text-3xl font-black mb-6">Amis</h1>${searchBlock}<div class="space-y-4">${feedHtml}</div></div>`;
 
-                    <div class="flex gap-4 bg-gray-50 rounded-2xl p-3 mb-3" onclick='window.openPreview(${previewJson})'>
-                        <img src="${act.itemImg}" class="w-14 h-20 rounded-lg object-cover bg-gray-200 shadow-sm">
-                        <div class="flex-1">
-                            <div class="font-black text-xs mb-1">${act.itemTitle}</div>
-                            <div class="text-orange-500 font-black text-xs">★ ${act.rating}</div>
-                            <p class="mt-2 text-gray-600 text-[11px] italic">"${act.comment || ''}"</p>
+            } else {
+                container.innerHTML = `<div class="pt-24 px-5 pb-32"><h1 class="text-3xl font-black mb-6">Amis</h1>${searchBlock}<div class="text-center py-20 opacity-50"><div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300 text-2xl"><i class="fa-solid fa-user-group"></i></div><p class="font-bold text-gray-400 text-sm">Votre fil d'actualité est vide.</p></div></div>`;
+            }
+
+            if(focusedId) { const el = document.getElementById(focusedId); if(el) { el.value = focusedVal; el.focus(); const v = el.value; el.value = ''; el.value = v; } }
+        };
+
+        // --- NOUVELLE FONCTION : PETIT POPUP DES LIKES ---
+        window.showLikesList = (actId) => {
+            const act = window.socialFeed.find(a => a.id === actId);
+            if(!act || !act.likes || act.likes.length === 0) return;
+
+            // Création dynamique du popup (Overlay + Boite)
+            const overlay = document.createElement('div');
+            overlay.className = 'fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-6 animate-fade-in';
+            overlay.id = 'likes-popup-overlay';
+            
+            // Fermeture au clic dehors
+            overlay.onclick = (e) => {
+                if (e.target === overlay) document.body.removeChild(overlay);
+            };
+
+            let listHtml = '';
+            act.likes.forEach(uid => {
+                let u = (window.followingData || []).find(f => f.uid === uid || f.id === uid);
+                if (uid === window.currentUser.uid) u = window.userProfile;
+                const name = u ? u.name : 'Utilisateur';
+                const avatar = u && u.avatar ? `<img src="${u.avatar}" class="w-full h-full object-cover">` : `<span class="font-bold text-gray-500 text-xs">${name[0]}</span>`;
+
+                listHtml += `
+                    <div class="flex items-center justify-between py-2 border-b border-gray-50 last:border-0 cursor-pointer hover:bg-gray-50 rounded-lg px-2" onclick="document.body.removeChild(document.getElementById('likes-popup-overlay')); window.openPublicProfile('${uid}')">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gray-100 overflow-hidden flex items-center justify-center border border-gray-50">
+                                ${avatar}
+                            </div>
+                            <span class="font-bold text-sm text-gray-900">${name}</span>
                         </div>
                     </div>
-                    
-                    <div class="flex items-center gap-6 mt-4 mb-2 px-2">
-                        <button onclick="window.toggleLike('${act.id}')" class="text-2xl transition-transform active:scale-75 ${isLiked ? 'like-bounce' : 'text-gray-400'}">
-                            <i class="fa-${isLiked ? 'solid' : 'regular'} fa-heart"></i>
-                        </button>
-                        <button onclick="window.openCommentModal('${act.id}')" class="text-2xl text-gray-400">
-                            <i class="fa-regular fa-comment"></i>
-                        </button>
-                    </div>
-
-                    <div class="flex items-center px-2 mb-2 min-h-[20px]">
-                        ${facesHtml}
-                        <div class="text-xs font-bold text-gray-800">${likesText}</div>
-                    </div>
-                    
-                    <div class="px-2">
-                        ${commentsCount > 0 ? `<div class="text-[11px] text-gray-500 font-medium mt-1 cursor-pointer" onclick="window.openCommentModal('${act.id}')">Voir les ${commentsCount} commentaires</div>` : ''}
-                    </div>
-                </div>`
+                `;
             });
 
-            container.innerHTML = `<div class="pt-20 px-5 pb-32"><h1 class="text-4xl font-black mb-6">Amis</h1>
-            ${searchBlock}
-            ${feedHtml}
-            </div>`;
+            overlay.innerHTML = `
+                <div class="bg-white w-full max-w-xs rounded-2xl shadow-2xl overflow-hidden transform transition-all scale-100">
+                    <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                        <h3 class="font-black text-sm uppercase text-gray-500 tracking-wider">Aimé par</h3>
+                        <button onclick="document.body.removeChild(document.getElementById('likes-popup-overlay'))" class="text-gray-400 hover:text-black">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="p-3 max-h-[50vh] overflow-y-auto">
+                        ${listHtml}
+                    </div>
+                </div>
+            `;
 
-            // Restauration du focus
-            if(focusedId) { const el = document.getElementById(focusedId); if(el) { el.value = focusedVal; el.focus(); } }
+            document.body.appendChild(overlay);
         };
 
         /* --- 2. CENTRE DE NOTIFICATIONS --- */
@@ -1363,10 +1534,12 @@
             }
 
             // B. Reset Base de Données (Marquer comme lu)
+            // On prend toutes les notifs non lues qui ont un ID valide
             const unreadNotifs = window.extState.notifications.filter(n => !n.read && n.id);
             if(unreadNotifs.length > 0) {
                 const batch = writeBatch(db);
                 unreadNotifs.forEach(n => {
+                    // Attention au chemin : users -> uid -> notifications -> id
                     const ref = doc(db, 'artifacts', appId, 'users', window.currentUser.uid, 'notifications', n.id);
                     batch.update(ref, { read: true });
                 });
@@ -1374,7 +1547,8 @@
             }
 
             const container = document.getElementById('main-content');
-            const notifs = window.extState.notifications; 
+            // On trie pour avoir les plus récentes en haut
+            const notifs = (window.extState.notifications || []).sort((a,b) => (b.time || b.timestamp) - (a.time || a.timestamp));
 
             container.innerHTML = `
                 <div class="pt-10 px-6 pb-32">
@@ -1382,18 +1556,64 @@
                         <button onclick="window.switchView('home')" class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center"><i class="fa-solid fa-arrow-left"></i></button>
                         <h1 class="text-3xl font-black">Activité</h1>
                     </div>
+                    
                     ${notifs.length === 0 ? '<div class="opacity-40 text-center mt-20 font-bold">Rien pour le moment</div>' : ''}
-                    ${notifs.map(n => `
-                        <div class="notif-item cursor-pointer" onclick="window.goToActivity('${n.actId}')">
-                            <div class="notif-icon ${n.type === 'like' || n.type === 'like_comment' ? 'text-red-500' : 'text-blue-600'}">
-                                ${n.type.includes('like') ? '<i class="fa-solid fa-heart"></i>' : (n.type === 'mention' ? '<i class="fa-solid fa-at"></i>' : '<i class="fa-solid fa-comment"></i>')}
+                    
+                    ${notifs.map(n => {
+                        // LOGIQUE D'AFFICHAGE SELON LE TYPE
+                        const isFollow = n.type === 'follow';
+                        
+                        // 1. L'action au clic : Profil (si abonnement) OU Activité (si like/com)
+                        // Note: pour le follow, l'ID de l'envoyeur est stocké dans 'fromUid'
+                        const action = isFollow 
+                            ? `window.openPublicProfile('${n.fromUid}')` 
+                            : `window.goToActivity('${n.actId}')`;
+
+                        // 2. L'icône et la couleur
+                        let icon = '';
+                        let color = '';
+                        
+                        if (isFollow) {
+                            icon = '<i class="fa-solid fa-user-plus"></i>';
+                            color = 'text-green-500'; // Vert pour les abonnements
+                        } else if (n.type && n.type.includes('like')) {
+                            icon = '<i class="fa-solid fa-heart"></i>';
+                            color = 'text-red-500';
+                        } else if (n.type === 'mention') {
+                            icon = '<i class="fa-solid fa-at"></i>';
+                            color = 'text-purple-500';
+                        } else {
+                            icon = '<i class="fa-solid fa-comment"></i>';
+                            color = 'text-blue-600';
+                        }
+
+                        // 3. Le texte
+                        // Pour un follow, le message est déjà complet dans n.message
+                        const content = isFollow 
+                            ? `<span class="font-bold text-gray-800">${n.message}</span>`
+                            : `<span class="font-black">${n.user}</span> ${n.text}`;
+
+                        const subText = isFollow
+                            ? 'Voir le profil'
+                            : `Sur ${n.itemTitle || 'un post'}`;
+
+                        const timeDisplay = new Date(n.time || n.timestamp).toLocaleDateString();
+
+                        return `
+                        <div class="notif-item cursor-pointer flex items-start gap-3 py-3 border-b border-gray-50" onclick="${action}">
+                            <div class="notif-icon ${color} text-lg w-8 pt-1">
+                                ${icon}
                             </div>
                             <div class="flex-1">
-                                <div class="text-sm"><span class="font-black">${n.user}</span> ${n.text}</div>
-                                <div class="text-[10px] text-gray-400 font-bold uppercase mt-1">Sur ${n.itemTitle || 'un post'} • ${new Date(n.time).toLocaleDateString()}</div>
+                                <div class="text-sm leading-tight">${content}</div>
+                                <div class="text-[10px] text-gray-400 font-bold uppercase mt-1">
+                                    ${subText} • ${timeDisplay}
+                                </div>
                             </div>
+                            ${!n.read ? '<div class="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>' : ''}
                         </div>
-                    `).join('')}
+                        `;
+                    }).join('')}
                 </div>
             `;
         };
@@ -1534,118 +1754,327 @@
             return `<div class="grid-item" onclick='window.openPreview(${itemData})'><img src="${item.img || ''}">${item.rating ? `<div class="grid-rating">${item.rating}</div>` : ''}<div class="grid-item-overlay"><div class="flex justify-between items-start"><div class="text-[8px] font-black truncate text-white uppercase leading-tight pr-1">${item.title}</div></div><div class="flex flex-col mt-1">${dateDisplay}<div class="flex justify-between items-center"><span class="text-[7px] font-bold text-gray-300">${item.releaseDate ? item.releaseDate.split('-')[0] : ''}</span><span class="text-[7px] font-black text-white px-1 py-0.5 rounded bg-black/50">${item.metricValue || 0}</span></div></div></div></div>`;
         };
 
-        /* --- J.2 RENDU DU PROFIL PRIVÉ --- */
-        window.renderProfile = () => {
-            const following = window.followingData || [];
+      /* --- J.2 RENDU DU PROFIL PRIVÉ (AVEC FAVORIS & BIO) --- */
+        window.renderProfile = async () => {
             const container = document.getElementById('main-content');
+            const following = window.followingData || [];
             
+            // 1. Récupération des données
+            let followers = [];
+            try {
+                const q = query(collectionGroup(db, 'profile'), where('following', 'array-contains', window.currentUser.uid));
+                const snap = await getDocs(q);
+                followers = snap.docs.map(doc => ({ ...doc.data(), id: doc.ref.parent.parent.id })); 
+            } catch (e) {}
+
+            // Données utilisateur
+            const bio = window.userProfile.bio || "Ajouter une biographie...";
+            const pinned = window.userProfile.pinned || [null, null, null]; // 3 emplacements
+
             container.innerHTML = `
                 <div class="pt-28 px-6 pb-32 text-center">
+                    
                     <div class="avatar-container">
                         <div class="avatar-img">${window.userProfile.avatar ? `<img src="${window.userProfile.avatar}" class="w-full h-full object-cover">` : (window.userProfile.name ? window.userProfile.name[0] : '?')}</div>
                         <label class="avatar-edit-btn"><i class="fa-solid fa-camera text-blue-600 text-sm"></i><input type="file" accept="image/*" class="hidden" onchange="window.handleAvatarUpload(event)"></label>
                     </div>
-                    <div class="mt-6 flex items-center justify-center gap-2"><h2 class="text-3xl font-black">${window.userProfile.name}</h2><button onclick="window.updateProfileName()" class="text-blue-600 text-xl"><i class="fa-solid fa-pen-to-square"></i></button></div>
                     
-                    <div class="mt-6 text-center">
-                         <div class="inline-block bg-gray-100 px-3 py-1 rounded-lg text-xs font-mono text-gray-500 cursor-pointer" onclick="navigator.clipboard.writeText(window.currentUser.uid); alert('Copié')">ID: ${window.currentUser.uid} <i class="fa-regular fa-copy ml-1"></i></div>
+                    <div class="mt-4 flex items-center justify-center gap-2">
+                        <h2 class="text-3xl font-black">${window.userProfile.name}</h2>
+                        <button onclick="window.updateProfileName()" class="text-blue-600 text-lg"><i class="fa-solid fa-pen-to-square"></i></button>
+                    </div>
+                    <p class="bio-text cursor-pointer hover:text-blue-600" onclick="window.updateBio()">${bio} <i class="fa-solid fa-pen text-[10px] ml-1 opacity-50"></i></p>
+
+                    <div class="text-left mt-8 mb-2 px-1"><span class="text-xs font-black uppercase text-gray-400 tracking-widest">Mes 3 Coups de ❤️</span></div>
+                    <div class="pinned-grid">
+                        ${[0, 1, 2].map(i => {
+                            const item = pinned[i];
+                            if (item) {
+                                return `
+                                <div class="pinned-item filled" onclick="window.openPinSelector(${i})">
+                                    <img src="${item.img}">
+                                    <div class="pinned-overlay"><i class="fa-solid fa-rotate text-white"></i></div>
+                                    <div class="absolute top-1 right-1 bg-black/60 text-white text-[8px] font-black px-1 rounded">${item.rating || '?'}</div>
+                                </div>`;
+                            } else {
+                                return `
+                                <div class="pinned-item" onclick="window.openPinSelector(${i})">
+                                    <i class="fa-solid fa-plus text-gray-300 text-2xl"></i>
+                                </div>`;
+                            }
+                        }).join('')}
                     </div>
 
-                    <div class="mt-8 text-left">
-                        <button class="follow-toggle-btn shadow-sm" onclick="document.getElementById('following-list').classList.toggle('open')">
-                            <span>Mes Abonnements (${following.length})</span>
-                            <i class="fa-solid fa-chevron-down"></i>
-                        </button>
-                        <div id="following-list" class="following-dropdown">
-                            ${following.length > 0 ? following.map(p => `
-                                <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                                    <div class="flex items-center gap-3 cursor-pointer" onclick="window.openPublicProfile('${p.uid || p.id}')">
-                                        <div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">${p.avatar ? `<img src="${p.avatar}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center font-bold text-xs">${p.name[0]}</div>`}</div>
-                                        <span class="font-bold text-sm">${p.name}</span>
-                                    </div>
-                                    <button onclick="window.unfollowUser('${p.uid || p.id}')" class="text-red-500 text-xs font-bold">Retirer</button>
-                                </div>
-                            `).join('') : '<div class="p-4 text-center text-sm text-gray-400">Aucun abonnement</div>'}
+                    <div class="flex gap-3 mt-6">
+                        <div class="flex-1"><button class="w-full bg-white border border-gray-100 p-4 rounded-2xl shadow-sm flex flex-col items-center gap-1" onclick="document.getElementById('following-list').classList.toggle('open'); document.getElementById('followers-list').classList.remove('open')"><span class="text-xl font-black text-gray-900">${following.length}</span><span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Abonnements</span></button></div>
+                        <div class="flex-1"><button class="w-full bg-white border border-gray-100 p-4 rounded-2xl shadow-sm flex flex-col items-center gap-1" onclick="document.getElementById('followers-list').classList.toggle('open'); document.getElementById('following-list').classList.remove('open')"><span class="text-xl font-black text-blue-600">${followers.length}</span><span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Abonnés</span></button></div>
+                    </div>
+
+                    <div id="following-list" class="following-dropdown mt-2 overflow-hidden transition-all duration-300">
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-inner">
+                            ${following.length > 0 ? following.map(p => `<div class="flex items-center justify-between px-4 py-3 border-b border-gray-50 last:border-0"><div class="flex items-center gap-3 cursor-pointer" onclick="window.openPublicProfile('${p.uid || p.id}')"><div class="w-8 h-8 rounded-full bg-blue-50 overflow-hidden flex items-center justify-center">${p.avatar ? `<img src="${p.avatar}" class="w-full h-full object-cover">` : `<span class="font-bold text-blue-600 text-xs">${p.name[0]}</span>`}</div><span class="font-bold text-sm">${p.name}</span></div><button onclick="window.unfollowUser('${p.uid || p.id}')" class="text-red-500 text-[10px] font-black uppercase">Arrêter</button></div>`).join('') : '<div class="p-6 text-center text-xs text-gray-400">Aucun abonnement</div>'}
                         </div>
                     </div>
 
-                    <div class="ios-group !mx-0 mt-8">
-                        <div class="ios-cell py-3 cursor-pointer flex justify-between items-center" onclick="window.openFeedbackModal()">
-                            <span class="font-bold text-sm">Nous contacter / Feedback</span>
-                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                    <div id="followers-list" class="following-dropdown mt-2 overflow-hidden transition-all duration-300">
+                        <div class="bg-white rounded-2xl border border-gray-100 shadow-inner">
+                            ${followers.length > 0 ? followers.map(f => `<div class="flex items-center justify-between px-4 py-3 border-b border-gray-50 last:border-0"><div class="flex items-center gap-3 cursor-pointer" onclick="window.openPublicProfile('${f.id}')"><div class="w-8 h-8 rounded-full bg-blue-50 overflow-hidden flex items-center justify-center">${f.avatar ? `<img src="${f.avatar}" class="w-full h-full object-cover">` : `<span class="font-bold text-blue-600 text-xs">${f.name ? f.name[0] : '?'}</span>`}</div><span class="font-bold text-sm max-w-[80px] truncate">${f.name}</span></div><div class="flex gap-3 items-center"><button onclick="window.removeFollower('${f.id}')" class="text-red-500 text-[10px] font-black uppercase">Retirer</button><div class="h-3 w-px bg-gray-300"></div><button onclick="window.blockUser('${f.id}')" class="text-red-800 text-[10px] font-black uppercase">Bloquer</button></div></div>`).join('') : '<div class="p-6 text-center text-xs text-gray-400">Aucun abonné</div>'}
                         </div>
                     </div>
 
-                    <div class="ios-group !mx-0 mt-4">
-                        <div class="ios-cell py-4 cursor-pointer" onclick="window.logout()"><span class="text-red-500 font-bold text-sm">Déconnexion</span></div>
-                    </div>
+                    <div class="ios-group !mx-0 mt-8"><div class="ios-cell py-3 cursor-pointer flex justify-between items-center" onclick="window.openFeedbackModal()"><span class="font-bold text-sm">Nous contacter / Feedback</span><i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i></div></div>
+                    <div class="ios-group !mx-0 mt-4"><div class="ios-cell py-4 cursor-pointer text-center" onclick="window.logout()"><span class="text-red-500 font-bold text-sm">Déconnexion</span></div></div>
                 </div>`;
         };
 
-        /* --- J.3 RENDU DU PROFIL PUBLIC (AMI) --- */
-        window.openPublicProfile = async (uid) => {
-            if (!uid || uid === 'undefined') { console.error("ID utilisateur manquant"); return; }
-            if (uid === window.currentUser.uid) { window.switchView('profile'); return; }
+        // --- NOUVELLES FONCTIONS DE GESTION (BIO & PIN) ---
+        
+        // 1. Mise à jour de la Bio
+        window.updateBio = async () => {
+            const current = window.userProfile.bio || "";
+            const newBio = prompt("Entrez votre biographie (courte phrase) :", current);
+            if (newBio !== null && newBio !== current) {
+                try {
+                    const ref = doc(db, 'artifacts', appId, 'users', window.currentUser.uid, 'profile', 'info');
+                    await updateDoc(ref, { bio: newBio });
+                    window.userProfile.bio = newBio;
+                    window.renderProfile();
+                } catch(e) { console.error(e); alert("Erreur sauvegarde bio."); }
+            }
+        };
+
+        // 2. Ouvrir le sélecteur de favoris
+        window.currentPinSlot = 0;
+        window.openPinSelector = (slotIndex) => {
+            window.currentPinSlot = slotIndex;
+            const modal = document.getElementById('pin-selector-modal');
+            const list = document.getElementById('pin-selector-list');
+            modal.classList.add('open');
             
-            document.getElementById('public-profile-modal').classList.add('open');
-            const container = document.getElementById('public-profile-content');
-            container.innerHTML = `<div class="pt-40 text-center"><i class="fa-solid fa-spinner fa-spin text-3xl text-gray-400"></i></div>`;
-
-            try {
-                const profSnap = await getDoc(doc(db, 'artifacts', appId, 'users', uid, 'profile', 'info'));
-                if (!profSnap.exists()) throw new Error("User not found");
-                const prof = profSnap.data();
-                const itemsSnap = await getDocs(collection(db, 'artifacts', appId, 'users', uid, 'items'));
-                const items = itemsSnap.docs.map(d => d.data());
-                const isFollowing = (window.following || []).includes(uid);
-
-                let html = `
-                    <div class="pt-24 px-6 pb-32">
-                        <div class="text-center mb-8 relative">
-                            <div id="profile-toast" class="fixed top-24 left-1/2 -translate-x-1/2 bg-black/80 text-white px-6 py-3 rounded-full text-sm font-bold opacity-0 pointer-events-none transition-opacity duration-300 z-50"></div>
-                            <div class="w-24 h-24 mx-auto rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-4xl overflow-hidden shadow-lg border-4 border-white">
-                                 ${prof.avatar ? `<img src="${prof.avatar}" class="w-full h-full object-cover">` : prof.name[0]}
-                            </div>
-                            <h1 class="text-2xl font-black mt-4">${prof.name}</h1>
-                            <button onclick="window.toggleFollowFromProfile('${uid}')" class="${isFollowing ? 'bg-gray-200 text-black' : 'bg-blue-600 text-white'} px-6 py-2 rounded-full font-bold mt-3 text-sm transition-colors">
-                                ${isFollowing ? 'Abonné' : 'S\'abonner'}
-                            </button>
-                            <p class="text-gray-400 font-bold text-xs uppercase mt-4">${items.filter(i=> i.status === 'Vu' || i.status === 'Lu').length} éléments terminés</p>
+            // On affiche seulement les éléments terminés (Vu ou Lu)
+            const candidates = window.myCollection.filter(i => i.status === 'Vu' || i.status === 'Lu');
+            
+            // Fonction interne d'affichage
+            window.renderPinList = (items) => {
+                if(items.length === 0) { list.innerHTML = '<div class="text-center text-gray-400 mt-10">Rien trouvé.<br>Ajoutez des films vus d\'abord !</div>'; return; }
+                
+                list.innerHTML = items.map(item => {
+                    // On prépare l'objet à sauvegarder (pas besoin de tout, juste l'essentiel)
+                    const safeItem = { 
+                        id: item.id, title: item.title, img: item.img, 
+                        rating: item.rating, type: item.type 
+                    };
+                    const json = JSON.stringify(safeItem).replace(/'/g, "&apos;");
+                    
+                    return `
+                    <div class="flex items-center gap-4 p-3 border-b border-gray-100 cursor-pointer hover:bg-white" onclick='window.savePin(${json})'>
+                        <img src="${item.img}" class="w-10 h-14 object-cover rounded bg-gray-200">
+                        <div>
+                            <div class="font-bold text-sm">${item.title}</div>
+                            <div class="text-[10px] text-gray-500 font-bold uppercase">${item.type} • ${item.rating || '-'} ★</div>
                         </div>
-                `;
-
-                ['Film', 'Série', 'Livre'].forEach(cat => {
-                    const catItems = items.filter(i => i.type === cat && (i.status === 'Vu' || i.status === 'Lu'));
-                    if(catItems.length > 0) {
-                         catItems.sort((a,b) => (b.finishDate || 0) > (a.finishDate || 0) ? 1 : -1);
-                         html += `<div class="year-divider">${cat}s</div><div class="items-grid">`;
-                         catItems.forEach(item => { html += window.generateGridItemHTML(item); });
-                         html += `</div>`;
-                    }
-                });
-                html += `</div>`;
-                container.innerHTML = html;
-            } catch (e) { container.innerHTML = `<div class="pt-40 text-center font-bold text-gray-400">Erreur chargement profil</div>`; console.error(e); }
-        };
-        
-        window.toggleFollowFromProfile = async (uid) => {
-            if(!window.currentUser) return;
-            const ref = doc(db, 'artifacts', appId, 'users', window.currentUser.uid, 'profile', 'info');
-            const isFollowing = window.following.includes(uid);
-            try {
-                if (isFollowing) {
-                    if(confirm("Ne plus suivre ?")) { await updateDoc(ref, { following: arrayRemove(uid) }); window.openPublicProfile(uid); }
-                } else {
-                    await updateDoc(ref, { following: arrayUnion(uid) });
-                    const toast = document.getElementById('profile-toast');
-                    if(toast) { toast.innerText = "Abonné avec succès !"; toast.style.opacity = "1"; setTimeout(() => window.openPublicProfile(uid), 1000); } 
-                    else window.openPublicProfile(uid);
+                    </div>`;
+                }).join('');
+                
+                // Option "Vider la case" si elle est déjà pleine
+                if(window.userProfile.pinned && window.userProfile.pinned[slotIndex]) {
+                     list.innerHTML = `<div class="p-3 mb-2 bg-red-50 text-red-500 text-center font-bold text-sm rounded-xl cursor-pointer" onclick="window.savePin(null)">🗑 Retirer ce favori</div>` + list.innerHTML;
                 }
-            } catch (e) { console.error("Erreur follow:", e); alert("Erreur lors de l'action"); }
+            };
+            
+            window.renderPinList(candidates);
         };
 
-        window.closePublicProfile = () => document.getElementById('public-profile-modal').classList.remove('open');
+        // 3. Filtrer la recherche dans la modale
+        window.filterPinSelector = (query) => {
+            const term = query.toLowerCase();
+            const all = window.myCollection.filter(i => i.status === 'Vu' || i.status === 'Lu');
+            const filtered = all.filter(i => i.title.toLowerCase().includes(term));
+            window.renderPinList(filtered);
+        };
+
+        // 4. Sauvegarder le choix
+        window.savePin = async (itemData) => {
+            try {
+                const ref = doc(db, 'artifacts', appId, 'users', window.currentUser.uid, 'profile', 'info');
+                let newPinned = window.userProfile.pinned || [null, null, null];
+                newPinned[window.currentPinSlot] = itemData; // itemData est null si on supprime
+                
+                await updateDoc(ref, { pinned: newPinned });
+                window.userProfile.pinned = newPinned; // Update local
+                
+                document.getElementById('pin-selector-modal').classList.remove('open');
+                window.renderProfile(); // Rafraîchir l'interface
+            } catch(e) { console.error(e); alert("Erreur sauvegarde."); }
+        };
         
+    /* --- J.3 RENDU DU PROFIL PUBLIC (AMI) - VERSION FIXÉE --- */
+window.friendData = [];
+window.friendState = { type: 'Film', status: 'Vu', sort: 'date' };
+
+window.openPublicProfile = async (uid) => {
+    if (!uid || uid === 'undefined') { console.error("ID manquant"); return; }
+    if (uid === window.currentUser.uid) { window.switchView('profile'); return; }
+    
+    document.getElementById('public-profile-modal').classList.add('open');
+    const container = document.getElementById('public-profile-content');
+    container.innerHTML = `<div class="pt-40 text-center"><i class="fa-solid fa-spinner fa-spin text-3xl text-gray-400"></i></div>`;
+
+    try {
+        const profSnap = await getDoc(doc(db, 'artifacts', appId, 'users', uid, 'profile', 'info'));
+        if (!profSnap.exists()) throw new Error("User not found");
+        const prof = profSnap.data();
+        
+        const itemsSnap = await getDocs(collection(db, 'artifacts', appId, 'users', uid, 'items'));
+        window.friendData = itemsSnap.docs.map(d => d.data());
+
+        const iAmBlocked = (prof.blocked || []).includes(window.currentUser.uid);
+        const isFollowing = (window.following || []).includes(uid);
+        
+        const bio = prof.bio || "";
+        const pinned = prof.pinned || [null, null, null];
+        const hasPinned = pinned.some(p => p !== null);
+
+        let buttonHTML = '';
+        if (iAmBlocked) {
+            buttonHTML = `<button disabled class="bg-gray-200 text-gray-400 px-8 py-2.5 rounded-full font-bold mt-4 text-sm cursor-not-allowed"><i class="fa-solid fa-ban mr-1"></i> Bloqué</button>`;
+        } else {
+            buttonHTML = `<button onclick="window.toggleFollowFromProfile('${uid}')" class="${isFollowing ? 'bg-gray-100 text-gray-800 border border-gray-200' : 'bg-blue-600 text-white shadow-md shadow-blue-200'} px-8 py-2.5 rounded-full font-bold mt-4 text-sm transition-all active:scale-95">${isFollowing ? 'Abonné' : 'S\'abonner'}</button>`;
+        }
+
+        let html = `
+            <button onclick="window.closePublicProfile()" class="fixed top-6 left-6 z-50 w-10 h-10 bg-white/80 backdrop-blur-md rounded-full shadow-md flex items-center justify-center text-black"><i class="fa-solid fa-arrow-left"></i></button>
+
+            <div class="pt-24 bg-white relative z-10">
+                <div class="text-center px-6 pb-6 border-b border-gray-50">
+                    <div id="profile-toast" class="fixed top-24 left-1/2 -translate-x-1/2 bg-black/80 text-white px-6 py-3 rounded-full text-sm font-bold opacity-0 pointer-events-none transition-opacity duration-300 z-50"></div>
+                    <div class="w-24 h-24 mx-auto rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-4xl overflow-hidden shadow-lg border-4 border-white">
+                         ${prof.avatar ? `<img src="${prof.avatar}" class="w-full h-full object-cover">` : (prof.name ? prof.name[0] : '?')}
+                    </div>
+                    <h1 class="text-2xl font-black mt-4">${prof.name}</h1>
+                    ${bio ? `<p class="bio-text mt-2">"${bio}"</p>` : ''}
+                    ${buttonHTML}
+
+                    ${hasPinned && !iAmBlocked ? `
+                        <div class="mt-8 mb-2 px-1 text-left"><span class="text-xs font-black uppercase text-gray-400 tracking-widest">Ses Coups de ❤️</span></div>
+                        <div class="pinned-grid">
+                            ${pinned.map(item => item ? `
+                                <div class="pinned-item filled">
+                                    <img src="${item.img}">
+                                    <div class="absolute top-1 right-1 bg-black/60 text-white text-[8px] font-black px-1 rounded">${item.rating || '?'}</div>
+                                </div>
+                            ` : `<div class="pinned-item opacity-20"></div>`).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+        `;
+
+        if (!iAmBlocked) {
+            html += `
+                <div class="sticky top-0 bg-white/95 backdrop-blur-md z-20 pt-2 shadow-sm">
+                    <div class="flex gap-6 px-6 border-b border-gray-100">
+                        <button onclick="window.switchFriendTab('Film')" id="f-tab-Film" class="pb-3 text-sm font-bold border-b-2 border-black">Films</button>
+                        <button onclick="window.switchFriendTab('Livre')" id="f-tab-Livre" class="pb-3 text-sm font-bold text-gray-400 border-b-2 border-transparent">Livres</button>
+                        <button onclick="window.switchFriendTab('Série')" id="f-tab-Serie" class="pb-3 text-sm font-bold text-gray-400 border-b-2 border-transparent">Séries</button>
+                    </div>
+                    <div class="flex gap-2 px-6 py-3 overflow-x-auto no-scrollbar">
+                        <button onclick="window.switchFriendStatus('Vu')" id="f-stat-Vu" class="px-4 py-1.5 rounded-full bg-black text-white text-xs font-bold whitespace-nowrap">Vu / Lu</button>
+                        <button onclick="window.switchFriendStatus('Wishlist')" id="f-stat-Wishlist" class="px-4 py-1.5 rounded-full bg-gray-100 text-gray-500 text-xs font-bold whitespace-nowrap">Wishlist</button>
+                    </div>
+                    <div class="flex justify-between items-center px-6 py-2 bg-gray-50/50 border-b border-gray-100">
+                        <span class="text-[10px] font-black uppercase text-gray-400 tracking-widest" id="friend-count-label">...</span>
+                        <button onclick="window.cycleFriendSort()" class="bg-gray-200 text-gray-800 px-3 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1"><i class="fa-solid fa-arrow-down-short-wide"></i><span id="friend-sort-label">Date</span></button>
+                    </div>
+                </div>
+                <div id="friend-grid-content" class="px-4 py-4 min-h-[300px] pb-32"></div>
+            </div>`; 
+        }
+
+        container.innerHTML = html;
+        if (!iAmBlocked) window.renderFriendGrid();
+
+    } catch (e) { 
+        console.error(e);
+        container.innerHTML = `<div class="pt-40 text-center font-bold text-gray-400">Erreur de chargement.</div>`; 
+    }
+};
+
+// --- FONCTIONS DE NAVIGATION (INDISPENSABLES) ---
+window.switchFriendTab = (type) => {
+    window.friendState.type = type;
+    ['Film', 'Livre', 'Serie'].forEach(t => {
+        const el = document.getElementById(`f-tab-${t}`);
+        if(el) {
+            if (t === type || (t === 'Serie' && type === 'Série')) {
+                el.classList.remove('text-gray-400', 'border-transparent'); el.classList.add('text-black', 'border-black');
+            } else { el.classList.add('text-gray-400', 'border-transparent'); el.classList.remove('text-black', 'border-black'); }
+        }
+    });
+    window.renderFriendGrid();
+};
+
+window.switchFriendStatus = (status) => {
+    window.friendState.status = status;
+    ['Vu', 'Wishlist'].forEach(s => {
+        const el = document.getElementById(`f-stat-${s}`);
+        if(el) {
+            if (s === status) { el.classList.remove('bg-gray-100', 'text-gray-500'); el.classList.add('bg-black', 'text-white'); }
+            else { el.classList.add('bg-gray-100', 'text-gray-500'); el.classList.remove('bg-black', 'text-white'); }
+        }
+    });
+    window.renderFriendGrid();
+};
+
+window.cycleFriendSort = () => {
+    const current = window.friendState.sort;
+    if (current === 'date') window.friendState.sort = 'rating';
+    else if (current === 'rating') window.friendState.sort = 'name';
+    else window.friendState.sort = 'date';
+    window.renderFriendGrid();
+};
+
+window.renderFriendGrid = () => {
+    const container = document.getElementById('friend-grid-content');
+    if(!container) return;
+    const sortLabel = document.getElementById('friend-sort-label');
+    const map = { 'date': 'Date', 'rating': 'Note', 'name': 'Nom' };
+    if(sortLabel) sortLabel.innerText = map[window.friendState.sort];
+
+    let filtered = window.friendData.filter(i => i.type === window.friendState.type && (i.status === window.friendState.status || (window.friendState.status === 'Vu' && i.status === 'Lu')));
+    const label = document.getElementById('friend-count-label');
+    if(label) label.innerText = `${filtered.length} ÉLÉMENTS`;
+
+    const sortMode = window.friendState.sort;
+    filtered.sort((a, b) => {
+        if (sortMode === 'rating') return (b.rating || 0) - (a.rating || 0);
+        if (sortMode === 'name') return (a.title || '').localeCompare(b.title || '');
+        return (b.finishDate || b.lastUpdate || '0') > (a.finishDate || a.lastUpdate || '0') ? 1 : -1;
+    });
+
+    if (filtered.length === 0) {
+        container.innerHTML = `<div class="py-20 text-center opacity-40"><div class="font-bold text-sm text-gray-400">Aucun élément ici</div></div>`;
+        return;
+    }
+
+    container.innerHTML = `<div class="items-grid">${filtered.map(item => window.generateGridItemHTML(item)).join('')}</div>`;
+};
+
+window.toggleFollowFromProfile = async (uid) => {
+    const myRef = doc(db, 'artifacts', appId, 'users', window.currentUser.uid, 'profile', 'info');
+    const isFollowing = window.following.includes(uid);
+    try {
+        if (isFollowing) {
+            if(confirm("Ne plus suivre ?")) { await updateDoc(myRef, { following: arrayRemove(uid) }); window.openPublicProfile(uid); }
+        } else {
+            await updateDoc(myRef, { following: arrayUnion(uid) });
+            try { await addDoc(collection(db, 'artifacts', appId, 'users', uid, 'notifications'), { type: 'follow', title: 'Nouvel abonné', message: `${window.userProfile.name} vous suit !`, timestamp: Date.now(), read: false, fromUid: window.currentUser.uid, img: window.userProfile.avatar || null }); } catch(e) {}
+            window.openPublicProfile(uid);
+        }
+    } catch (e) { console.error(e); }
+};
+
+window.closePublicProfile = () => document.getElementById('public-profile-modal').classList.remove('open');
+
         /* --- J.4 RENDU DES STATISTIQUES --- */
         window.toggleStatsMode = (mode) => { window.extState.statsMode = mode; window.renderStatsView(); };
 
