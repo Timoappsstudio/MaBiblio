@@ -11,3 +11,7 @@ window.MABIBLIO_FIREBASE_CONFIG = {
     messagingSenderId: "683284434520",
     appId: "1:683284434520:web:0c72c547703843781f442d"
 };
+
+// Clé publique des notifications web (Firebase → Paramètres → Général → Cloud Messaging → Certificats Web Push)
+// Propre au projet en ligne mabiblio-dc595.
+window.MABIBLIO_VAPID_KEY = "BOVuujikRpkKalqNxa46_9OHYrLbtGzMQaY39wfVGd9wdYJ4VYS7lT9nbfcFbtVOUwDOrEHnhoxCPxhhulvbWQ4";
