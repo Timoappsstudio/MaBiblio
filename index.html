@@ -44,6 +44,10 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://image.tmdb.org">
+    <link rel="preconnect" href="https://books.google.com">
+    <link rel="dns-prefetch" href="https://covers.openlibrary.org">
+    <link rel="dns-prefetch" href="https://i.ytimg.com">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -310,6 +314,58 @@
         .st-rank li.is-tap, .st-sentences li.is-tap { cursor: pointer; -webkit-tap-highlight-color: transparent; }
         .st-rank li.is-tap:active, .st-sentences li.is-tap:active { opacity: .6; }
         .st-rank-go { color: #B9B3BF; font-size: 11px; flex-shrink: 0; }
+        /* Page Recommandations */
+        .rc-chips { margin-top: 14px; }
+        .rc-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .rc-title { font-family: var(--font-display); font-weight: 800; font-size: 30px; line-height: 1.05; letter-spacing: -0.02em; min-width: 0; }
+        .rc-row { margin-top: 22px; }
+        .rc-h { padding: 0 16px; margin-bottom: 10px; }
+        .rc-h h3 { font-family: var(--font-display); font-weight: 800; font-size: 20px; line-height: 1.15; }
+        .rc-h p { font-size: 12.5px; font-weight: 600; color: var(--muted); margin-top: 2px; }
+        .rc-seed { font-style: italic; }
+        .rc-strip { display: flex; align-items: flex-start; gap: 12px; overflow-x: auto; padding: 2px 16px 8px; scroll-snap-type: x proximity; scroll-padding: 0 16px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+        .rc-strip::-webkit-scrollbar { display: none; }
+        .rc-tile { width: 112px; flex-shrink: 0; text-align: left; background: none; border: none; padding: 0; font-family: inherit; color: var(--ink); cursor: pointer; scroll-snap-align: start; }
+        .rc-tile.is-big { width: 148px; }
+        .rc-tile.is-square { width: 128px; }
+        .rc-tile.is-square.is-big { width: 156px; }
+        .rc-tile.is-wide { width: 208px; }
+        .rc-tile:active { transform: scale(.97); }
+        .rc-img { position: relative; display: block; width: 100%; aspect-ratio: 2 / 3; border-radius: 16px; overflow: hidden; background: #E9E3DA; box-shadow: 0 5px 14px rgba(22,21,26,.12); }
+        .rc-tile.is-square .rc-img { aspect-ratio: 1 / 1; }
+        .rc-tile.is-wide .rc-img { aspect-ratio: 16 / 9; }
+        .rc-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .rc-t { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 12.5px; font-weight: 800; line-height: 1.25; margin-top: 7px; }
+        .rc-m { display: block; font-size: 11px; font-weight: 600; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .rc-empty { margin: 0 16px; padding: 14px 16px; background: #fff; border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--muted); }
+        .rc-by { display: inline-flex; align-items: center; gap: 4px; color: var(--ink); }
+        .rc-av { width: 16px; height: 16px; border-radius: 50%; background: var(--lav); display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; overflow: hidden; }
+        .rc-av img { width: 100%; height: 100%; object-fit: cover; }
+        /* Fiche : amis qui l'ont vu + conseiller */
+        .pv-fr { background: var(--ground); border-radius: 22px; padding: 10px 10px 10px 12px; margin: -6px 0 18px; }
+        .pv-fr-top { display: flex; align-items: center; gap: 8px; }
+        .pv-fr-who { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; background: none; border: none; padding: 0; font-family: inherit; color: var(--ink); text-align: left; cursor: pointer; }
+        .pv-fr-who:disabled { cursor: default; color: var(--muted); }
+        .pv-fr-stack { display: flex; flex-shrink: 0; }
+        .pv-fr-stack .pv-fr-av + .pv-fr-av { margin-left: -9px; }
+        .pv-fr-av { width: 30px; height: 30px; border-radius: 50%; background: var(--lav); box-shadow: 0 0 0 2.5px var(--ground); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; overflow: hidden; flex-shrink: 0; color: var(--ink); }
+        .pv-fr-av img { width: 100%; height: 100%; object-fit: cover; }
+        .pv-fr-av.is-empty { background: #fff; color: var(--muted); font-size: 11px; }
+        .pv-fr-chev { font-size: 10px; color: var(--muted); transition: transform .2s; }
+        .pv-fr-who.open .pv-fr-chev { transform: rotate(180deg); }
+        .pv-fr-reco { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 13px; border-radius: 18px; background: var(--ink); color: #fff; font-weight: 800; font-size: 12.5px; border: none; font-family: inherit; cursor: pointer; }
+        .pv-fr-reco:active { transform: scale(.96); }
+        .pv-fr-list { list-style: none; margin: 10px 0 2px; padding: 0; display: none; flex-direction: column; gap: 8px; }
+        .pv-fr-list.open { display: flex; }
+        .pv-fr-list li { display: flex; align-items: center; gap: 10px; cursor: pointer; padding-right: 4px; }
+        /* Choix des amis à qui conseiller */
+        .rp-list { list-style: none; margin: 0; padding: 0 16px; overflow-y: auto; flex: 1; min-height: 0; }
+        .rp-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; cursor: pointer; }
+        .rp-row input { position: absolute; opacity: 0; pointer-events: none; }
+        .rp-check { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #D8D2C8; display: flex; align-items: center; justify-content: center; color: transparent; font-size: 12px; flex-shrink: 0; transition: .15s; }
+        .rp-row input:checked ~ .rp-check { background: var(--ink); border-color: var(--ink); color: #fff; }
+        .rp-tag { display: inline-block; margin-top: 2px; font-size: 11px; font-weight: 800; background: var(--mint-tint); padding: 2px 8px; border-radius: 9px; }
+        .rp-note { width: 100%; height: 48px; border-radius: 24px; border: none; background: #fff; padding: 0 18px; font-family: inherit; font-size: 15px; font-weight: 600; color: var(--ink); outline: none; }
         /* Liste d'une personne / d'un genre */
         #works-modal { background: var(--ground); z-index: 21000; }
         #works-modal.is-under { z-index: 19000; }
@@ -402,6 +458,7 @@
         .wn-list li { display: flex; gap: 12px; align-items: flex-start; animation: wnIn .4s ease both; }
         .wn-list li > span:last-child { display: flex; flex-direction: column; gap: 2px; font-size: 13px; line-height: 1.35; color: var(--muted); font-weight: 600; }
         .wn-list b { color: var(--ink); font-size: 15px; font-weight: 800; }
+        .wn-foot { margin: 0 18px 10px; padding: 10px 12px; border-radius: 14px; background: var(--ground); font-size: 12.5px; font-weight: 700; color: var(--ink); }
         .wn-ic { width: 40px; height: 40px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; color: var(--ink); }
         @keyframes wnIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
         @media (prefers-reduced-motion: reduce) { .wn-list li { animation: none; } }
@@ -627,7 +684,7 @@
             <div class="home-top">
                 <button type="button" class="home-hello" onclick="window.switchView('profile')" aria-label="Mon profil">
                     <span class="home-avatar" id="home-avatar"></span>
-                    <span class="home-hello-text"><span class="home-hello-small">Salut,</span><span class="home-hello-name" id="home-name"></span></span>
+                    <span class="home-hello-text"><span class="home-hello-name" id="home-name"></span><span class="home-hello-small">Mon profil <i class="fa-solid fa-chevron-right" style="font-size:9px"></i></span></span>
                 </button>
                 <div class="round-btn notif-btn" role="button" aria-label="Notifications" onclick="window.openNotifications()"><i class="fa-regular fa-bell"></i><div class="notif-badge" id="notif-badge">0</div></div>
             </div>
@@ -685,8 +742,8 @@
             <div id="nav-home" class="nav-btn active" role="button" aria-label="Accueil" onclick="window.switchView('home')"><i class="fa-solid fa-house"></i><span>Accueil</span></div>
             <div id="nav-friends" class="nav-btn" role="button" aria-label="Amis" onclick="window.switchView('friends')"><i class="fa-solid fa-user-group"></i><span>Amis</span></div>
             <div class="nav-plus" role="button" aria-label="Ajouter une œuvre" onclick="window.openSearchModal()"><i class="fa-solid fa-plus"></i></div>
+            <div id="nav-reco" class="nav-btn" role="button" aria-label="Recommandations" onclick="window.switchView('reco')"><i class="fa-regular fa-compass"></i><span>Recommandations</span></div>
             <div id="nav-stats" class="nav-btn" role="button" aria-label="Statistiques" onclick="window.switchView('stats')"><i class="fa-solid fa-chart-simple"></i><span>Stats</span></div>
-            <div id="nav-profile" class="nav-btn" role="button" aria-label="Moi" onclick="window.switchView('profile')"><i class="fa-solid fa-circle-user"></i><span>Moi</span></div>
         </nav>
     </div>
 
@@ -1276,6 +1333,7 @@
                 })).filter(i => !HIDDEN_TYPES.includes(i.type));
                 window.refreshCurrentView();
                 if (window.scheduleStatsSummary) window.scheduleStatsSummary(); // résumé pour les classements entre amis
+                if (window.scheduleRecoShowcase) window.scheduleRecoShowcase(); // vitrine (œuvres notées 8+) pour les recommandations des amis
             }, (err) => console.error('Écoute bibliothèque', err));
         };
 
@@ -1330,6 +1388,7 @@
                 window._allActivity = all.slice(0, 60);
                 window._feedState = 'ok';
                 window.applyFeedFilter();
+                if (window.warmFeedCovers) window.warmFeedCovers();
             };
             const unsubs = chunks.map((chunk, i) => onSnapshot(
                 query(collection(db, 'artifacts', appId, 'public', 'data', 'activity'), where('userId', 'in', chunk), orderBy('timestamp', 'desc'), limit(60)),
@@ -1435,6 +1494,7 @@
                         userName: window.userProfile.name,
                         userAvatar: '', // la photo actuelle est lue dans le profil à l'affichage
                         itemTitle: itemToSave.title,
+                        itemId: String(itemToSave.id || '').slice(0, 80), // pour retrouver la fiche depuis « Le top MaBiblio »
                         itemImg: itemToSave.img || '',
                         itemDesc: itemToSave.desc || '', // Important pour le feed
                         type: itemToSave.type,
@@ -1550,6 +1610,7 @@
             if (window.currentView === 'profile') window.renderProfile();
             if (window.currentView === 'friends') window.renderSocialFeed();
             if (window.currentView === 'stats') window.renderStatsView();
+            if (window.currentView === 'reco' && window.renderRecoView) window.renderRecoView();
         };
 
         const TMDB_KEY = "fa1123067cae30eea6420cfaef569bc2";
@@ -1635,8 +1696,13 @@
                 // La petite flèche se cale juste après le nom de la catégorie
                 let m = document.getElementById('hero-measure');
                 if (!m) { m = document.createElement('span'); m.id = 'hero-measure'; m.className = 'header-title-select'; m.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;width:auto;left:-9999px'; document.body.appendChild(m); }
-                m.textContent = cat.label;
-                const w = m.offsetWidth;
+                const wc = window._heroW || (window._heroW = {});
+                let w = wc[cat.label];
+                if (!w) {
+                    m.textContent = cat.label;
+                    w = m.offsetWidth;
+                    if (document.fonts && document.fonts.status === 'loaded') wc[cat.label] = w; // polices pas encore là : on remesurera
+                }
                 sel.style.width = w ? (w + 6) + 'px' : ''; // la mesure inclut déjà la place de la flèche
             }
             const sub = document.getElementById('home-hero-sub');
@@ -1766,8 +1832,10 @@
             return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
         };
         // Adresse d'image à afficher (le visuel généré si l'image manque ou vient de l'ancien service en panne)
+        // Google Livres : https et sans « &edge=curl » (effet de page cornée recalculé par Google à chaque fois : plus lent)
+        window.fixCoverUrl = (u) => String(u || '').replace(/^http:\/\/books\.google\./, 'https://books.google.').replace(/&edge=curl/g, '');
         window.coverSrc = (img, title) => {
-            const s = String(img || '');
+            const s = window.fixCoverUrl(img);
             if (!s || s.includes('via.placeholder.com')) return esc(window.placeholderCover(title));
             return safeImg(s) || esc(window.placeholderCover(title));
         };
@@ -1775,6 +1843,17 @@
         window.imgFallback = (el) => { el.onerror = null; el.src = window.placeholderCover(el.dataset.title || ''); };
         const coverImg = (img, title, cls, extra = '') => `<img src="${window.coverSrc(img, title)}" data-title="${esc(title)}" onerror="window.imgFallback(this)" class="${cls}" ${extra}>`;
         window.coverImg = coverImg;
+        // Préchargement discret des 8 premières couvertures du fil (une seule fois par image, quand le téléphone est libre)
+        const warmed = new Set();
+        window.warmFeedCovers = () => {
+            const run = () => (window._allActivity || []).slice(0, 8).forEach(a => {
+                const u = window.fixCoverUrl(a && a.itemImg);
+                if (!/^https:\/\//.test(u) || warmed.has(u)) return;
+                warmed.add(u);
+                const im = new Image(); im.decoding = 'async'; im.src = u;
+            });
+            if ('requestIdleCallback' in window) requestIdleCallback(run, { timeout: 3000 }); else setTimeout(run, 500);
+        };
 
         // --- Détails complets d'une œuvre (chargés à l'ouverture de la fiche, plus à chaque recherche) ---
         // On en profite pour garder genres et pays : ils serviront aux statistiques détaillées.
@@ -1790,10 +1869,10 @@
                         const d = await r.json();
                         const credits = d.credits || {};
                         item.cast = (credits.cast || []).slice(0, 4).map(c => c.name).join(', ');
-                        item.castList = (credits.cast || []).slice(0, 8).map(c => c.name);
+                        item.castList = (credits.cast || []).slice(0, 15).map(c => c.name);
                         if (item.type === 'Film') {
-                            const director = (credits.crew || []).find(x => x.job === 'Director');
-                            item.author = director ? director.name : (item.author || '');
+                            const directors = (credits.crew || []).filter(x => x.job === 'Director').map(x => x.name);
+                            item.author = directors.length ? [...new Set(directors)].join(', ') : (item.author || '');
                             item.metricValue = d.runtime || item.metricValue || 0;
                         } else {
                             item.author = (d.created_by || []).map(c => c.name).join(', ') || item.author || '';
@@ -2136,6 +2215,7 @@
                     </div>
                     ${chips.length ? `<div class="flex flex-wrap gap-1.5 mb-4">${chips.join('')}</div>` : ''}
                     ${metaInfos}
+                    ${window.previewFriendsHtml ? window.previewFriendsHtml(item) : ''}
                     ${item.needsDetails && !item.detailsLoaded && !item.docId ? `<div class="text-gray-500 text-xs mb-4 font-semibold"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Chargement des détails…</div>` : ''}
                     ${actionButtonsHtml}
                     ${commentHtml}
@@ -2710,7 +2790,7 @@
                     const snapshot = await getDocs(query(collectionGroup(db, 'profile'), limit(500)));
                     // L'identifiant est lu dans le chemin du document (users/{uid}/profile/info) :
                     // les profils récents ne l'enregistrent pas dans leurs données.
-                    const all = snapshot.docs.map(d => ({ ...d.data(), uid: d.ref.parent.parent.id }));
+                    const all = snapshot.docs.filter(d => d.id === 'info').map(d => ({ ...d.data(), uid: d.ref.parent.parent.id }));
                     all.forEach(u => window.rememberProfile(u.uid, u));
                     window._allProfiles = all;
                     window._allProfilesAt = Date.now();
@@ -2898,7 +2978,7 @@
             }
 
             if (sortedFeed.length > 0) {
-                sortedFeed.forEach(act => {
+                sortedFeed.forEach((act, actIdx) => {
                     const likes = Array.isArray(act.likes) ? act.likes : [];
                     const isLiked = likes.includes(window.currentUser.uid);
                     const commentsCount = Array.isArray(act.comments) ? act.comments.length : 0;
@@ -2955,7 +3035,7 @@
 
                         <div class="feed-work" style="background:${cat.tint}" onclick="window.openPreviewKey(${jsArg(previewKey)})">
                             <div class="relative ${thumbClass} shrink-0 rounded-2xl overflow-hidden shadow-md">
-                                ${coverImg(act.itemImg, act.itemTitle, 'w-full h-full object-cover bg-gray-200 ' + (act.type === 'YouTube' ? 'scale-[1.35]' : ''), 'loading="lazy"')}
+                                ${coverImg(act.itemImg, act.itemTitle, 'w-full h-full object-cover bg-gray-200 ' + (act.type === 'YouTube' ? 'scale-[1.35]' : ''), actIdx < 4 ? 'decoding="async"' + (actIdx < 2 ? ' fetchpriority="high"' : '') : 'loading="lazy" decoding="async"')}
                                 <div class="feed-rating">${esc(act.rating || '-')}</div>
                             </div>
                             <div class="flex-1 py-0.5 min-w-0">
@@ -3646,18 +3726,28 @@
             const container = document.getElementById('main-content');
             const following = window.followingData || [];
             
-            // 1. Récupération des abonnés (une seule fois tant qu'on reste sur la page)
+            // 1. Abonnés relus à chaque arrivée sur la page, EN ARRIÈRE-PLAN : la page s'affiche tout de suite
+            //    (avec les abonnés de la dernière visite), puis se met à jour quand la liste arrive.
+            //    Avant, la bibliothèque restait affichée ~1 s le temps de cette lecture.
             if (window._followersCache === null) {
-                window._followersCache = [];
-                try {
-                    const q = query(collectionGroup(db, 'profile'), where('following', 'array-contains', window.currentUser.uid));
-                    const snap = await getDocs(q);
-                    window._followersCache = snap.docs.map(d => ({ ...d.data(), id: d.ref.parent.parent.id }));
-                } catch (e) { console.error('Abonnés', e); }
+                window._followersCache = window._followersLast || [];
+                window._followersLoading = !window._followersLast;
+                (async () => {
+                    try {
+                        const q = query(collectionGroup(db, 'profile'), where('following', 'array-contains', window.currentUser.uid));
+                        const snap = await getDocs(q);
+                        window._followersCache = window._followersLast = snap.docs.filter(d => d.id === 'info').map(d => ({ ...d.data(), id: d.ref.parent.parent.id }));
+                    } catch (e) { console.error('Abonnés', e); }
+                    window._followersLoading = false;
+                    if (window.currentView === 'profile') window.renderProfile();
+                })();
             }
-            // Noms des comptes bloqués (liste des membres gardée en mémoire)
+            // Noms des comptes bloqués (liste des membres gardée en mémoire) : chargés en arrière-plan aussi
             const blockedUids = window.myBlocked();
-            if (blockedUids.some(u => !window.profileCache[u])) { try { await window.loadAllProfiles(); } catch (e) { console.error(e); } }
+            if (blockedUids.some(u => !window.profileCache[u]) && !window._blockedNamesLoading) {
+                window._blockedNamesLoading = true;
+                window.loadAllProfiles().catch(e => console.error(e)).finally(() => { window._blockedNamesLoading = false; if (window.currentView === 'profile' && blockedUids.some(u => window.profileCache[u])) window.renderProfile(); });
+            }
             // Si l'utilisateur a changé de page pendant le chargement, on n'écrase pas la nouvelle page
             if (window.currentView !== 'profile') return;
             const followers = window._followersCache.filter(f => !window.myBlocked().includes(f.id));
@@ -3673,7 +3763,7 @@
 
             container.innerHTML = `
                 <div class="pt-16 px-4 pb-32">
-                    <h1 class="page-title" style="margin-bottom:16px">Profil</h1>
+                    <div class="flex items-center gap-3" style="margin-bottom:16px"><button type="button" class="round-btn shrink-0" onclick="window.switchView('home')" aria-label="Retour à l'accueil"><i class="fa-solid fa-arrow-left"></i></button><h1 class="page-title">Profil</h1></div>
 
                     <section class="pf-hero">
                         <div class="flex items-center gap-4">
@@ -3689,7 +3779,7 @@
                         <div class="pf-stats">
                             <div class="pf-stat"><b>${doneCount}</b><span>œuvre${doneCount > 1 ? 's' : ''}</span></div>
                             <button type="button" class="pf-stat" onclick="window.togglePeopleList('following-list')"><b>${following.length}</b><span>abonnement${following.length > 1 ? 's' : ''}</span></button>
-                            <button type="button" class="pf-stat" onclick="window.togglePeopleList('followers-list')"><b>${followers.length}</b><span>abonné${followers.length > 1 ? 's' : ''}</span></button>
+                            <button type="button" class="pf-stat" onclick="window.togglePeopleList('followers-list')"><b>${window._followersLoading ? '…' : followers.length}</b><span>abonné${followers.length > 1 ? 's' : ''}</span></button>
                         </div>
                     </section>
 
@@ -3791,6 +3881,7 @@
                 const targetRef = doc(db, 'artifacts', appId, 'users', targetUid, 'profile', 'info');
                 await updateDoc(targetRef, { following: arrayRemove(window.currentUser.uid) });
                 window._followersCache = null;
+                window._followersLast = (window._followersLast || []).filter(f => f.id !== targetUid);
                 window.ui.toast('Abonné retiré ✓');
                 window.renderProfile();
             } catch (e) { console.error(e); window.ui.alert("Impossible de retirer cet abonné pour le moment."); }
@@ -3815,6 +3906,7 @@
                 await updateDoc(myRef, { blocked: arrayUnion(targetUid), following: arrayRemove(targetUid) });
                 
                 window._followersCache = null;
+                window._followersLast = (window._followersLast || []).filter(f => f.id !== targetUid);
                 window.ui.toast('Compte bloqué');
                 if (document.getElementById('public-profile-modal').classList.contains('open')) window.closePublicProfile();
                 if (window.currentView === 'profile') window.renderProfile();
@@ -4021,7 +4113,8 @@ const isDone = (i) => i && i.status !== 'Wishlist' && i.status !== 'En cours';
 const ratingOf = (i) => { const r = num(i && i.rating, NaN); return Number.isFinite(r) && r > 0 ? r : null; };
 const yearOfRelease = (i) => { const m = String((i && i.releaseDate) || '').match(/^(1[89]\d\d|20\d\d)/); return m ? +m[1] : null; };
 const monthKeyOf = (i) => { const d = window.itemDateKey(i); return /^(19|20)\d\d-\d\d/.test(d) ? d.slice(0, 7) : null; };
-const fr1 = (n) => Number(n).toLocaleString('fr-FR', { maximumFractionDigits: 1 });
+const NF1 = (() => { try { return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }); } catch (e) { return null; } })();
+const fr1 = (n) => NF1 ? NF1.format(Number(n)) : Number(n).toLocaleString('fr-FR', { maximumFractionDigits: 1 }); // format préparé une fois (bien plus rapide)
 const frInt = (n) => Math.round(Number(n) || 0).toLocaleString('fr-FR');
 const MONTHS_S = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
 const MONTHS_L = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
@@ -4075,8 +4168,22 @@ const avgRating = (items) => { const rs = items.map(ratingOf).filter(r => r !== 
 const filmMinutes = (i) => num(i.metricValue) || num(i.durationMin);
 // Séries : saisons vues × épisodes par saison × durée d'un épisode (estimation, connue après complétion)
 const seriesMinutes = (i) => (num(i.episodesPerSeason) && num(i.episodeRunTime)) ? Math.max(1, num(i.metricValue) || 1) * num(i.episodesPerSeason) * num(i.episodeRunTime) : 0;
-const directorsOf = (i) => String(i.author || '').split(',').map(s => s.trim()).filter(s => s && s !== 'Inconnu');
-const actorsOf = (i) => (Array.isArray(i.castList) && i.castList.length ? i.castList : String(i.cast || '').split(',')).slice(0, 5).map(s => String(s).trim());
+const NOT_A_NAME = /^(inconnu|unknown|n\/a|-|\?)$/i;
+const directorsOf = (i) => String(i.author || '').split(',').map(s => s.trim()).filter(s => s && !NOT_A_NAME.test(s));
+// Tout le casting enregistré (jusqu'à 10 noms) : un acteur 6ᵉ au générique compte aussi
+const actorsOf = (i) => (Array.isArray(i.castList) && i.castList.length ? i.castList : String(i.cast || '').split(',')).slice(0, 30).map(s => String(s).trim()).filter(s => s && !NOT_A_NAME.test(s));
+// Les personnes d'une œuvre selon leur rôle : MÊME règle pour les classements des stats et pour la fiche d'une personne
+const artistsOf = (i) => [String(i.author || '').trim()].filter(n => n && !NOT_A_NAME.test(n));
+const peopleOf = (i, role) => role === 'actor' ? actorsOf(i) : role === 'artist' ? artistsOf(i) : directorsOf(i);
+// Classement de personnes : « Joël Dicker » et « Joel Dicker » (ou « pierre niney ») sont la même personne
+const tallyPeople = (items, namesOf) => {
+    const spell = new Map();
+    const keyOf = (n) => { const k = normTxt(n).replace(/[^a-z0-9]+/g, ' ').trim(); if (!k) return null; const m = spell.get(k) || new Map(); m.set(n, (m.get(n) || 0) + 1); spell.set(k, m); return k; };
+    return tally(items, i => (namesOf(i) || []).map(keyOf).filter(Boolean)).map(r => {
+        const m = spell.get(r.name);
+        return { ...r, name: m ? [...m.entries()].sort((a, b) => b[1] - a[1])[0][0] : r.name };
+    });
+};
 const countriesOf = (i) => (Array.isArray(i.countryCodes) && i.countryCodes.length ? i.countryCodes.map(regionName) : (Array.isArray(i.countries) ? i.countries : [])).filter(Boolean);
 
 // ---------- Petits blocs d'affichage ----------
@@ -4235,9 +4342,9 @@ const statsScreen = (sc) => {
             ${miniTile(mint, 'fa-solid fa-tv', pool.length - films.length, `série${pool.length - films.length > 1 ? 's' : ''}`)}
             ${miniTile('#fff', 'fa-solid fa-star', avgRating(pool) !== null ? fr1(avgRating(pool)) : '–', 'note moyenne')}
         </div>
-        ${ST.fs !== 'Série' ? sCard('Top réalisateurs', rankList(tally(films, directorsOf), lav, { showAvg: true, unit: (n) => n > 1 ? 'films' : 'film', tap: r => ({ role: 'director', name: r.name }) })) : ''}
-        ${ST.fs === 'Série' ? sCard('Top créateurs', rankList(tally(pool, directorsOf), mint, { showAvg: true, unit: (n) => n > 1 ? 'séries' : 'série', tap: r => ({ role: 'creator', name: r.name }) })) : ''}
-        ${sCard('Top acteurs', rankList(tally(pool, actorsOf), color, { max: 8, unit: plural, tap: r => ({ role: 'actor', name: r.name }) }))}
+        ${ST.fs !== 'Série' ? sCard('Top réalisateurs', rankList(tallyPeople(films, directorsOf), lav, { showAvg: true, unit: (n) => n > 1 ? 'films' : 'film', tap: r => ({ role: 'director', name: r.name, y: sc.isYear ? sc.curYear : null }) })) : ''}
+        ${ST.fs === 'Série' ? sCard('Top créateurs', rankList(tallyPeople(pool, directorsOf), mint, { showAvg: true, unit: (n) => n > 1 ? 'séries' : 'série', tap: r => ({ role: 'creator', name: r.name, y: sc.isYear ? sc.curYear : null }) })) : ''}
+        ${sCard('Top acteurs', rankList(tallyPeople(pool, actorsOf), color, { max: 8, unit: plural, tap: r => ({ role: 'actor', name: r.name, y: sc.isYear ? sc.curYear : null, t: ST.fs }) }))}
         ${sCard('Genres préférés', rankList(tally(pool, i => i.genres), color, { max: 6, showAvg: true, tap: r => ({ kind: 'genre', pool: 'screen', name: r.name }) }))}
         ${sCard('Pays les plus vus', rankList(tally(pool, countriesOf), color, { max: 6, tap: r => ({ kind: 'country', pool: 'screen', name: r.name }) }))}
         ${sCard('Langues originales', rankList(tally(pool, i => [langName(i.originalLanguage)]), color, { max: 6, tap: r => ({ kind: 'lang', pool: 'screen', name: r.name }) }))}
@@ -4260,7 +4367,7 @@ const statsBooks = (sc) => {
             ${miniTile('#fff', 'fa-solid fa-star', avgRating(books) !== null ? fr1(avgRating(books)) : '–', 'note moyenne')}
         </div>
         ${sCard(sc.isYear ? 'Pages par mois' : 'Pages par année', barChart(timelineCols(books, sc.isYear, sc.curYear, i => num(i.metricValue), () => miel), { fmt: (v) => v >= 1000 ? fr1(v / 1000) + 'k' : v }))}
-        ${sCard('Top auteurs', rankList(tally(books, directorsOf), miel, { showAvg: true, unit: (n) => n > 1 ? 'livres' : 'livre', tap: r => ({ role: 'author', name: r.name }) }))}
+        ${sCard('Top auteurs', rankList(tallyPeople(books, directorsOf), miel, { showAvg: true, unit: (n) => n > 1 ? 'livres' : 'livre', tap: r => ({ role: 'author', name: r.name, y: sc.isYear ? sc.curYear : null }) }))}
         ${sCard('Genres', rankList(tally(books, bookGenreNames), miel, { max: 6, showAvg: true, tap: r => ({ kind: 'genre', pool: 'Livre', name: r.name }) }))}
         ${sCard('Le livre le plus long', longestHtml)}`;
 };
@@ -4278,7 +4385,7 @@ const statsMusic = (sc) => {
             ${miniTile('#FFE4F0', 'fa-solid fa-headphones', `${frInt(mins / 60)} h`, "d'écoute")}
             ${miniTile('#fff', 'fa-solid fa-star', avgRating(albums) !== null ? fr1(avgRating(albums)) : '–', 'note moyenne')}
         </div>
-        ${sCard('Top artistes', rankList(tally(albums, i => [String(i.author || '').trim()]), rose, { showAvg: true, unit: (n) => n > 1 ? 'albums' : 'album', tap: r => ({ role: 'artist', name: r.name }) }))}
+        ${sCard('Top artistes', rankList(tallyPeople(albums, artistsOf), rose, { showAvg: true, unit: (n) => n > 1 ? 'albums' : 'album', tap: r => ({ role: 'artist', name: r.name, y: sc.isYear ? sc.curYear : null }) }))}
         ${sCard('Genres', rankList(tally(albums, i => i.genres), rose, { max: 6, showAvg: true, tap: r => ({ kind: 'genre', pool: 'Album', name: r.name }) }))}
         ${sCard('Albums par décennie', decades.length ? barChart(decades.map(d => ({ label: String(d.name), title: `Années ${d.name}`, parts: [{ v: d.count, color: rose }] }))) : sEmpty('Pas encore de dates de sortie.'))}`;
 };
@@ -4319,7 +4426,7 @@ const statsHabits = (sc) => {
 // ---------- Onglet « Amis » : affinité, classements entre amis, conseils ----------
 // Titre comparable : sans accents ni ponctuation, 60 caractères au plus (la même règle pour le résumé
 // publié dans le profil ET pour la bibliothèque complète : les deux donnent exactement les mêmes chiffres)
-const workTitle = (t) => normTxt(t).replace(/[^a-z0-9]+/g, ' ').trim().slice(0, 60).trim();
+const workTitle = (t) => titleKey(t).slice(0, 60).trim();
 const workKeys = (i) => {
     const keys = [];
     const id = String(i.id || '');
@@ -4393,14 +4500,23 @@ const statsFriends = () => (window.followingData || []).map(p => ({ uid: p.uid |
       gardé 24 h sur ce téléphone : en revenant sur la page, plus aucune lecture. */
 const FRIEND_TTL = 24 * 3600 * 1000;
 const friendCacheKey = (uid) => `mabiblio_fsum_${window.currentUser ? window.currentUser.uid : ''}_${uid}`;
+// Lu une seule fois par session (un résumé fait jusqu'à ~100 Ko : on ne le relit pas à chaque affichage)
+const friendCacheMemo = new Map();
 const readFriendCache = (uid) => {
+    const m = friendCacheMemo.get(uid);
+    if (m && Date.now() - m.at < FRIEND_TTL) return m.s && m.s.y === curYearNum() ? m.s : null;
+    const v = readFriendCacheRaw(uid);
+    friendCacheMemo.set(uid, { at: v && v._at ? v._at : Date.now(), s: v });
+    return v;
+};
+const readFriendCacheRaw = (uid) => {
     try {
         const c = JSON.parse(localStorage.getItem(friendCacheKey(uid)) || 'null');
-        if (c && c.s && c.s.v >= SUM_V && Date.now() - c.at < FRIEND_TTL && c.s.y === curYearNum()) return c.s;
+        if (c && c.s && c.s.v >= SUM_V && Date.now() - c.at < FRIEND_TTL && c.s.y === curYearNum()) { Object.defineProperty(c.s, '_at', { value: c.at, enumerable: false }); return c.s; }
     } catch (e) { /* cache illisible : on relira */ }
     return null;
 };
-const writeFriendCache = (uid, s) => { try { localStorage.setItem(friendCacheKey(uid), JSON.stringify({ at: Date.now(), s })); } catch (e) { /* téléphone plein : tant pis */ } };
+const writeFriendCache = (uid, s) => { friendCacheMemo.set(uid, { at: Date.now(), s }); try { localStorage.setItem(friendCacheKey(uid), JSON.stringify({ at: Date.now(), s })); } catch (e) { /* téléphone plein : tant pis */ } };
 const loadFriendLibrary = async (uid) => {
     try {
         const snap = await getDocs(collection(db, 'artifacts', appId, 'users', uid, 'items'));
@@ -4480,6 +4596,54 @@ document.addEventListener('visibilitychange', () => {
 window.addEventListener('pagehide', () => resetFriendDetail());
 window.showMoreCommon = () => { ST.commonShown = (ST.commonShown || 10) + 40; window.renderStatsView(); };
 
+// Version légère (œuvres en commun + affinité seulement), gardée en mémoire par ami : utilisée pour l'accueil de
+// l'onglet Amis et les recommandations. Recalculée seulement si sa bibliothèque ou la mienne change.
+// (Mêmes règles que computeAffinity : les deux donnent exactement les mêmes chiffres.)
+const myIdxMemo = { col: null, idx: null };
+const myDoneIndex = () => {
+    if (myIdxMemo.col !== window.myCollection || !myIdxMemo.idx) {
+        const idx = new Map();
+        (window.myCollection || []).filter(isDone).forEach(i => workKeys(i).forEach(k => { if (!idx.has(k)) idx.set(k, i); }));
+        myIdxMemo.col = window.myCollection; myIdxMemo.idx = idx;
+    }
+    return myIdxMemo.idx;
+};
+const parsedMemo = new Map();
+// Œuvres d'un ami : sa bibliothèque complète si on l'a lue, sinon son résumé (lu une seule fois)
+const friendWorks = (f) => {
+    const full = ST.friendItems[f.uid];
+    if (full && full.items && !full.error) return { sig: full.items, list: full.items };
+    const s = friendSummary(f);
+    if (!s) return null;
+    const sig = String(s.works || '');
+    const m = parsedMemo.get(f.uid);
+    if (m && m.sig === sig) return m;
+    const v = { sig, list: parseSummaryWorks(s) };
+    parsedMemo.set(f.uid, v);
+    return v;
+};
+const affLightMemo = new Map();
+window.affinityLight = (f) => {
+    const w = friendWorks(f);
+    if (!w) return null;
+    const m = affLightMemo.get(f.uid);
+    if (m && m.sig === w.sig && m.col === window.myCollection) return m.v;
+    const index = myDoneIndex();
+    const seen = new Set(); let n = 0; const agree = [];
+    w.list.forEach(t => {
+        if (!isDone(t)) return;
+        const mm = workKeys(t).map(k => index.get(k)).find(Boolean);
+        if (!mm || seen.has(mm)) return;
+        seen.add(mm); n++;
+        const a = ratingOf(mm), b = ratingOf(t);
+        if (a !== null && b !== null) agree.push(1 - Math.min(9, Math.abs(a - b)) / 9);
+    });
+    const K = 2;
+    const pct = agree.length ? Math.round(((agree.reduce((x, y) => x + y, 0) + 0.5 * K) / (agree.length + K)) * 100) : null;
+    const v = { n, rated: agree.length, pct };
+    affLightMemo.set(f.uid, { sig: w.sig, col: window.myCollection, v });
+    return v;
+};
 window.computeAffinity = (mine, theirs) => {
     const myDone = mine.filter(isDone), theirDone = theirs.filter(isDone);
     const index = new Map();
@@ -4510,27 +4674,35 @@ window.computeAffinity = (mine, theirs) => {
 
 // Conseiller une œuvre à un ami : elle arrive dans ses notifications (cloche)
 const recoSentKey = (uid, it) => `${uid}|${workKeys(it)[0] || ''}`;
-window.recommendTo = async (friendUid, key) => {
-    const it = itemRegistry.get(key);
-    if (!it || !friendUid || !window.currentUser || window.isHiddenUser(friendUid)) return;
-    const name = FIRST(window.liveUser(friendUid).name);
-    const note = await window.ui.prompt(`Conseiller « ${it.title} » à ${name}.\nUn petit mot ? (facultatif)`, '', { maxLength: 200, okLabel: 'Envoyer' });
-    if (note === null) return;
+// Envoi d'un conseil (depuis l'onglet Amis ou depuis n'importe quelle fiche) : vrai si c'est parti
+const sendRecoNotif = async (friendUid, it, note) => {
+    if (!it || !friendUid || !window.currentUser || window.isHiddenUser(friendUid)) return false;
     const clean = (v, n) => String(v || '').slice(0, n);
+    // Ma note seulement si l'œuvre est dans MA bibliothèque (jamais celle d'un ami)
+    const mine = it.docId && !it._fromFriend ? it : (window.ownedItemFor ? window.ownedItemFor(it) : null);
     try {
         await addDoc(collection(db, 'artifacts', appId, 'users', friendUid, 'notifications'), {
             type: 'reco', title: 'Conseil', fromUid: window.currentUser.uid, user: window.userProfile.name || '',
             message: `te conseille « ${clean(it.title, 120)} »`, text: `te conseille « ${clean(it.title, 120)} »`,
-            itemTitle: clean(it.title, 200), actId: null, note: clean(note.trim(), 200), rating: ratingOf(it),
+            itemTitle: clean(it.title, 200), actId: null, note: clean(String(note || '').trim(), 200), rating: mine ? ratingOf(mine) : null,
             item: { id: clean(it.id, 80), type: it.type, title: clean(it.title, 200), img: clean(it.img, 1000), author: clean(it.author, 200), releaseDate: clean(it.releaseDate, 30), desc: clean(it.desc, 600), genres: (Array.isArray(it.genres) ? it.genres : []).slice(0, 5).map(g => clean(g, 40)), metricValue: num(it.metricValue) },
             timestamp: Date.now(), read: false
         });
         const k = recoSentKey(friendUid, it);
         try { await updateDoc(doc(db, 'artifacts', appId, 'users', window.currentUser.uid, 'profile', 'info'), { recosSent: arrayUnion(k) }); } catch (e) { /* simple mémo */ }
         window.userProfile.recosSent = [...new Set([...(window.userProfile.recosSent || []), k])];
-        window.ui.toast(`Conseil envoyé à ${name} ✓`);
         if (window.currentView === 'stats') window.renderStatsView();
-    } catch (e) { console.error(e); window.ui.alert("Le conseil n'a pas pu être envoyé. Réessaie."); }
+        return true;
+    } catch (e) { console.error(e); return false; }
+};
+window.recommendTo = async (friendUid, key) => {
+    const it = itemRegistry.get(key);
+    if (!it || !friendUid || !window.currentUser || window.isHiddenUser(friendUid)) return;
+    const name = FIRST(window.liveUser(friendUid).name);
+    const note = await window.ui.prompt(`Conseiller « ${it.title} » à ${name}.\nUn petit mot ? (facultatif)`, '', { maxLength: 200, okLabel: 'Envoyer' });
+    if (note === null) return;
+    if (await sendRecoNotif(friendUid, it, note)) window.ui.toast(`Conseil envoyé à ${name} ✓`);
+    else window.ui.alert("Le conseil n'a pas pu être envoyé. Réessaie.");
 };
 window.setRecoQuery = (v) => {
     ST.recoQuery = String(v || '');
@@ -4624,11 +4796,9 @@ const statsFriendsBoard = (friends) => {
     // ---- Œuvres en commun et affinité, calculées avec TOUS les amis ----
     const myItems = window.myCollection || [];
     const shared = friends.map(f => {
-        const full = ST.friendItems[f.uid];
-        const theirs = (full && full.items && !full.error) ? full.items : (() => { const s = friendSummary(f); return s ? parseSummaryWorks(s) : null; })();
-        if (!theirs) return null;
-        const a = window.computeAffinity(myItems, theirs);
-        return { f, n: a.common.length, pct: a.rated.length >= 3 ? a.pct : null };
+        const a = window.affinityLight(f);
+        if (!a) return null;
+        return { f, n: a.n, pct: a.rated >= 3 ? a.pct : null };
     }).filter(Boolean);
     const byShared = [...shared].sort((a, b) => b.n - a.n);
     const byPct = shared.filter(s => s.pct !== null).sort((a, b) => b.pct - a.pct);
@@ -4755,6 +4925,11 @@ window.updateGoal = async (key, val) => {
                espacé (12 h, 24 h, 48 h), et après 3 échecs l'œuvre est laissée telle quelle (« metaMissing »).
              - la barre « Je complète tes œuvres » ne s'affiche qu'UNE fois : pour la toute première complétion. */
 const META_V = 1;
+// Films et séries : 2ᵉ passage (casting complet jusqu'à 10 noms, séries : acteurs de toutes les saisons,
+// réalisateur « Inconnu » remplacé, recherche par titre plus souple). Livres et albums : inchangé.
+const META_SCREEN_V = 3;
+const metaTarget = (i) => (i.type === 'Film' || i.type === 'Série') ? META_SCREEN_V : META_V;
+const needsMeta = (i) => num(i.metaV) < metaTarget(i);
 const ENRICH_TYPES = ['Film', 'Série', 'Livre', 'Album'];
 window._enrich = { running: false, done: 0, total: 0, showBar: false };
 const ENRICH_RETRY_MS = 12 * 3600 * 1000;
@@ -4765,17 +4940,30 @@ const writeEnrichTries = (uid, o) => { try { localStorage.setItem(enrichLsKey(ui
 const enrichBarSeen = (uid) => { try { return localStorage.getItem(`mabiblio_enrich_bar_${uid}`) === '1'; } catch (e) { return false; } };
 const markEnrichBarSeen = (uid) => { try { localStorage.setItem(`mabiblio_enrich_bar_${uid}`, '1'); } catch (e) {} };
 // Nombre d'essais déjà faits pour cette œuvre et date du dernier (dans l'œuvre ET sur ce téléphone)
+// (les essais d'un passage précédent ne comptent pas pour le nouveau)
 const enrichTries = (it, tries) => {
-    const t = tries[it.docId] || {};
-    return { n: Math.max(num(it.metaTry), num(t.n)), at: Math.max(num(it.metaTryAt), num(t.at)) };
+    const v = metaTarget(it);
+    const t = tries[it.docId] && num(tries[it.docId].v || 1) === v ? tries[it.docId] : {};
+    const mine = num(it.metaTryV || 1) === v;
+    return { n: Math.max(mine ? num(it.metaTry) : 0, num(t.n)), at: Math.max(mine ? num(it.metaTryAt) : 0, num(t.at)) };
 };
 const enrichWaiting = (it, tries) => {
     const { n, at } = enrichTries(it, tries);
     return !!at && Date.now() - at < ENRICH_RETRY_MS * Math.pow(2, Math.max(0, n - 1));
 };
-const isEmptyVal = (v) => v === undefined || v === null || v === '' || v === 0 || (Array.isArray(v) && v.length === 0);
+const isEmptyVal = (v) => v === undefined || v === null || v === '' || v === 0 || v === 'Inconnu' || (Array.isArray(v) && v.length === 0);
 const fill = (patch, item, key, val) => { if (isEmptyVal(item[key]) && !isEmptyVal(val)) patch[key] = val; };
-const titleKey = (t) => normTxt(t).replace(/[^a-z0-9]+/g, ' ').trim();
+const titleKeyMemo = new Map();
+const titleKey = (t) => {
+    const k = String(t ?? '');
+    let v = titleKeyMemo.get(k);
+    if (v === undefined) {
+        v = normTxt(k).replace(/[^a-z0-9]+/g, ' ').trim();
+        if (titleKeyMemo.size > 30000) titleKeyMemo.clear();
+        titleKeyMemo.set(k, v);
+    }
+    return v;
+};
 const httpJson = async (url) => {
     const r = await fetch(url);
     if (r.status === 404) return null;               // introuvable : on n'insistera pas
@@ -4785,27 +4973,38 @@ const httpJson = async (url) => {
 
 const enrichScreen = async (it) => {
     const ep = it.type === 'Film' ? 'movie' : 'tv';
+    const V = META_SCREEN_V;
     let tid = /^\d+$/.test(String(it.tmdbId || '')) ? String(it.tmdbId) : (/^\d+$/.test(String(it.id || '')) ? String(it.id) : null);
     const patch = {};
     if (!tid) {
-        // Œuvre ajoutée à la main ou depuis le fil : on la retrouve par son titre
+        // Œuvre ajoutée à la main ou depuis le fil : on la retrouve par son titre (français ou original),
+        // année à un an près ; sans année, seulement si un seul titre correspond exactement
         const y = yearOfRelease(it);
         const s = await httpJson(`https://api.themoviedb.org/3/search/${ep}?api_key=${TMDB_KEY}&query=${encodeURIComponent(it.title || '')}&language=fr-FR`);
         const want = titleKey(it.title);
-        const hit = ((s && s.results) || []).find(r => [r.title, r.name, r.original_title, r.original_name].some(t => titleKey(t) === want) && (!y || String(r.release_date || r.first_air_date || '').startsWith(String(y))));
-        if (!hit) return { metaV: META_V, metaMissing: true };
+        const same = ((s && s.results) || []).filter(r => [r.title, r.name, r.original_title, r.original_name].some(t => titleKey(t) === want));
+        const ry = (r) => +String(r.release_date || r.first_air_date || '').slice(0, 4) || 0;
+        const hit = y ? (same.find(r => ry(r) === y) || same.find(r => ry(r) && Math.abs(ry(r) - y) <= 1)) : (same.length === 1 ? same[0] : same.sort((a, b) => num(b.vote_count) - num(a.vote_count))[0]);
+        if (!hit) return { metaV: V, metaMissing: true };
         tid = String(hit.id);
         patch.tmdbId = tid;
     }
-    const d = await httpJson(`https://api.themoviedb.org/3/${ep}/${tid}?api_key=${TMDB_KEY}&language=fr-FR&append_to_response=credits`);
-    if (!d) return { ...patch, metaV: META_V, metaMissing: true };
+    const d = await httpJson(`https://api.themoviedb.org/3/${ep}/${tid}?api_key=${TMDB_KEY}&language=fr-FR&append_to_response=credits${ep === 'tv' ? ',aggregate_credits' : ''}`);
+    if (!d) return { ...patch, metaV: V, metaMissing: true };
     const credits = d.credits || {};
-    const castList = (credits.cast || []).slice(0, 8).map(c => c.name).filter(Boolean);
-    fill(patch, it, 'castList', castList);
+    // Séries : les acteurs de toutes les saisons, par nombre d'épisodes ; films : ordre du générique
+    const agg = ep === 'tv' && d.aggregate_credits && Array.isArray(d.aggregate_credits.cast) && d.aggregate_credits.cast.length
+        ? [...d.aggregate_credits.cast].sort((a, b) => num(b.total_episode_count) - num(a.total_episode_count)) : null;
+    const castList = (agg || [...(credits.cast || [])].sort((a, b) => num(a.order) - num(b.order))).slice(0, 15).map(c => c.name).filter(Boolean);
+    // Le casting est une donnée de TMDB (jamais saisie à la main pour une œuvre retrouvée) : on le remet à jour
+    if (castList.length && JSON.stringify(castList) !== JSON.stringify(it.castList || [])) patch.castList = castList;
     fill(patch, it, 'cast', castList.slice(0, 4).join(', '));
     if (it.type === 'Film') {
-        const dir = (credits.crew || []).filter(x => x.job === 'Director').map(x => x.name);
+        const dir = [...new Set((credits.crew || []).filter(x => x.job === 'Director').map(x => x.name))];
         fill(patch, it, 'author', dir.join(', '));
+        // Films à plusieurs réalisateurs : seul le premier était enregistré → on complète (sans rien retirer)
+        const have = String(it.author || '').split(',').map(x => x.trim()).filter(Boolean);
+        if (dir.length > 1 && have.length && have.every(h => dir.some(d => titleKey(d) === titleKey(h))) && have.length < dir.length) patch.author = dir.join(', ');
         fill(patch, it, 'metricValue', d.runtime || 0);
         fill(patch, it, 'durationMin', d.runtime || 0);
     } else {
@@ -4821,7 +5020,8 @@ const enrichScreen = async (it) => {
     fill(patch, it, 'countryCodes', (d.production_countries || []).map(c => c.iso_3166_1).concat(d.origin_country || []).filter((v, k, a) => v && a.indexOf(v) === k));
     fill(patch, it, 'originalLanguage', d.original_language || '');
     fill(patch, it, 'releaseDate', d.release_date || d.first_air_date || '');
-    return { ...patch, metaV: META_V };
+    if (it.metaMissing) patch.metaMissing = false;
+    return { ...patch, metaV: V };
 };
 
 const enrichBook = async (it) => {
@@ -4884,9 +5084,9 @@ window.startStatsEnrichment = async () => {
     const tries = readEnrichTries(uid);
     const enrichable = (window.myCollection || []).filter(i => i.docId && ENRICH_TYPES.includes(i.type));
     // Ménage : on oublie les essais des œuvres désormais complétées ou supprimées
-    const alive = new Set(enrichable.filter(i => !i.metaV).map(i => i.docId));
+    const alive = new Set(enrichable.filter(needsMeta).map(i => i.docId));
     Object.keys(tries).forEach(k => { if (!alive.has(k)) delete tries[k]; });
-    const todo = enrichable.filter(i => !i.metaV && !(E.skip && E.skip.has(i.docId)) && !enrichWaiting(i, tries));
+    const todo = enrichable.filter(i => needsMeta(i) && !(E.skip && E.skip.has(i.docId)) && !enrichWaiting(i, tries));
     writeEnrichTries(uid, tries);
     if (!todo.length) return;
     E.skip = E.skip || new Set();
@@ -4922,7 +5122,7 @@ window.startStatsEnrichment = async () => {
             const it = queue.shift();
             // Essai noté AVANT de commencer : même si l'appli est fermée en plein milieu, on ne recommence pas tout de suite
             const prev = enrichTries(it, tries);
-            tries[it.docId] = { n: prev.n + 1, at: Date.now() };
+            tries[it.docId] = { n: prev.n + 1, at: Date.now(), v: metaTarget(it) };
             writeEnrichTries(uid, tries);
             try {
                 const job = it.type === 'Livre' ? enrichBook(it) : it.type === 'Album' ? enrichAlbum(it) : enrichScreen(it);
@@ -4933,7 +5133,7 @@ window.startStatsEnrichment = async () => {
                 // Panne réseau ou service saturé : on réessaiera plus tard ; au bout de 3 fois, on laisse l'œuvre telle quelle
                 E.skip.add(it.docId);
                 const n = tries[it.docId].n;
-                const patch = n >= ENRICH_MAX_TRIES ? { metaV: META_V, metaMissing: true, metaTry: n } : { metaTry: n, metaTryAt: Date.now() };
+                const patch = n >= ENRICH_MAX_TRIES ? { metaV: metaTarget(it), metaMissing: true, metaTry: n, metaTryV: metaTarget(it) } : { metaTry: n, metaTryAt: Date.now(), metaTryV: metaTarget(it) };
                 pending.push([it.docId, patch]); Object.assign(it, patch);
             }
             E.done++;
@@ -5260,8 +5460,8 @@ window.startStatsEnrichment = async () => {
            la liste, la fiche s'ouvre par-dessus et, en la fermant, on retrouve la liste. */
         const personKey = (n) => normTxt(n).replace(/[^a-z0-9]+/g, ' ').trim();
         const PERSON_ROLES = {
-            director: { kicker: 'Réalisation', m: 'Réalisateur', f: 'Réalisatrice', icon: 'fa-solid fa-clapperboard', types: ['Film', 'Série'], color: 'Film' },
-            creator: { kicker: 'Création', m: 'Créateur', f: 'Créatrice', icon: 'fa-solid fa-lightbulb', types: ['Film', 'Série'], color: 'Série' },
+            director: { kicker: 'Réalisation', m: 'Réalisateur', f: 'Réalisatrice', icon: 'fa-solid fa-clapperboard', types: ['Film'], color: 'Film' },
+            creator: { kicker: 'Création', m: 'Créateur', f: 'Créatrice', icon: 'fa-solid fa-lightbulb', types: ['Série'], color: 'Série' },
             actor: { kicker: 'Casting', m: 'Acteur', f: 'Actrice', icon: 'fa-solid fa-masks-theater', types: ['Film', 'Série'], color: 'Film' },
             author: { kicker: 'Auteur', m: 'Auteur', f: 'Autrice', icon: 'fa-solid fa-pen-nib', types: ['Livre'], color: 'Livre' },
             artist: { kicker: 'Artiste', m: 'Artiste', f: 'Artiste', icon: 'fa-solid fa-microphone', types: ['Album'], color: 'Album' }
@@ -5274,7 +5474,33 @@ window.startStatsEnrichment = async () => {
         const personInLibrary = (role, name) => {
             const k = personKey(name);
             const R = PERSON_ROLES[role];
-            return (window.myCollection || []).filter(i => R.types.includes(i.type) && (role === 'actor' ? allCastOf(i) : authorsOfItem(i)).some(n => personKey(n) === k));
+            return (window.myCollection || []).filter(i => R.types.includes(i.type) && peopleOf(i, role).some(n => personKey(n) === k));
+        };
+        // Filmographie (TMDB) : mes films retrouvés SÛREMENT (même numéro TMDB, ou même titre ET même année)
+        // où la personne n'était pas enregistrée (petit rôle, ancien casting incomplet…) → on l'ajoute à l'œuvre,
+        // pour que les stats comptent exactement les mêmes œuvres que cette page.
+        const sureMatch = (w) => {
+            const t = titleKey(w.title), y = yearOfRelease(w);
+            return (window.myCollection || []).find(i => i.type === w.type && i.docId && (
+                (w.id && (String(i.id) === String(w.id) || String(i.tmdbId || '') === String(w.id))) ||
+                (t && y && titleKey(i.title) === t && yearOfRelease(i) === y)));
+        };
+        const linkPerson = (role, name, items) => {
+            if (!window.currentUser || !items.length) return;
+            const k = personKey(name);
+            items.slice(0, 30).forEach(i => {
+                let patch = null;
+                if (role === 'actor') {
+                    const list = Array.isArray(i.castList) && i.castList.length ? i.castList : String(i.cast || '').split(',').map(x => x.trim()).filter(Boolean);
+                    if (!list.some(n => personKey(n) === k)) patch = { castList: [...list, name].slice(0, 30) };
+                } else if (role === 'director' || role === 'creator') {
+                    const list = directorsOf(i);
+                    if (!list.some(n => personKey(n) === k)) patch = { author: [...list, name].join(', ') };
+                }
+                if (!patch) return;
+                Object.assign(i, patch);
+                updateDoc(doc(db, 'artifacts', appId, 'users', window.currentUser.uid, 'items', i.docId), patch).catch(e => console.warn('Lien personne', e));
+            });
         };
         // Œuvre de ma bibliothèque correspondant à un résultat (identifiant, identifiant TMDB, ou titre + année)
         const ownedMatch = (r) => {
@@ -5285,6 +5511,7 @@ window.startStatsEnrichment = async () => {
                 (r.type === 'Livre' && bookKey(i.title, i.author) === bookKey(r.title, r.author))));
         };
 
+        window.ownedItemFor = (it) => ownedMatch(it) || null;
         // ---- Recherches (une fois par personne, gardées en mémoire) ----
         const personCache = new Map();
         const NO_SELF = /\b(self|himself|herself|themselves|lui-même|elle-même|narrat)/i;
@@ -5428,14 +5655,26 @@ window.startStatsEnrichment = async () => {
         const renderPerson = (spec, data) => {
             const R = PERSON_ROLES[spec.role];
             const cat = catOf(R.color);
-            // Mes œuvres : celles où la personne est enregistrée + celles retrouvées dans sa filmographie / bibliographie
-            const mine = new Set(personInLibrary(spec.role, spec.name));
-            ((data && data.works) || []).forEach(w => { const o = ownedMatch(w); if (o) mine.add(o); });
-            const lib = [...mine].sort(byMyRating);
-            const seenN = lib.filter(isDone).length;
+            // Mes œuvres : celles où la personne est enregistrée + mes films sûrement retrouvés dans sa filmographie
+            // (ceux-là sont complétés au passage, pour que les stats comptent pareil)
+            if (data && data.works && !data.error && ['actor', 'director', 'creator'].includes(spec.role) && !spec.linked) {
+                const k = personKey(spec.name);
+                const toLink = [...new Set(data.works.filter(w => R.types.includes(w.type)).map(sureMatch).filter(Boolean))].filter(i => !peopleOf(i, spec.role).some(n => personKey(n) === k));
+                spec.linked = true;
+                linkPerson(spec.role, spec.name, toLink);
+            }
+            const lib = personInLibrary(spec.role, spec.name).sort(byMyRating);
+            // Même règle que la ligne des stats : œuvres terminées, et la période / les types choisis dans les stats
+            const inScope = (i) => isDone(i) && (!spec.y || window.itemYear(i) === spec.y) && (!spec.t || spec.t === 'both' || i.type === spec.t);
+            const seenN = lib.filter(inScope).length;
             const kicker = data && data.gender === 1 ? R.f : data && data.gender === 2 ? R.m : R.kicker;
             const unit = { director: ['film', 'films'], creator: ['œuvre', 'œuvres'], actor: ['œuvre', 'œuvres'], author: ['livre', 'livres'], artist: ['album', 'albums'] }[spec.role];
-            const sub = lib.length ? `<b>${lib.length}</b> ${lib.length > 1 ? unit[1] : unit[0]} dans ta bibliothèque${seenN && seenN !== lib.length ? ` · ${seenN} terminé${seenN > 1 ? 's' : ''}` : ''}` : 'Rien encore dans ta bibliothèque';
+            const did = { author: 'lu', artist: 'écouté' }[spec.role] || 'vu';
+            const fem = unit[0] === 'œuvre';
+            const didN = (n) => `${did}${fem ? 'e' : ''}${n > 1 ? 's' : ''}`;
+            const sub = !lib.length ? 'Rien encore dans ta bibliothèque'
+                : seenN === lib.length && !spec.y ? `<b>${lib.length}</b> ${lib.length > 1 ? unit[1] : unit[0]} ${didN(lib.length)}`
+                : `<b>${seenN}</b> ${seenN > 1 ? unit[1] : unit[0]} ${didN(seenN)}${spec.y ? ` en ${esc(spec.y)}` : ''} · ${lib.length} dans ta bibliothèque`;
             const known = data ? (data.works || []) : null;
             const knownTitle = spec.role === 'actor' ? 'Ses rôles les plus connus' : spec.role === 'author' ? 'Ses livres les plus connus' : spec.role === 'artist' ? 'Ses albums les plus connus' : 'Ses œuvres les plus connues';
             const knownBody = !known ? `<div class="wl-grid">${'<span class="wl-tile"><span class="pv-sim-img aspect-[2/3] pv-skel"></span></span>'.repeat(6)}</div>`
@@ -5469,7 +5708,7 @@ window.startStatsEnrichment = async () => {
             if (!name) return;
             if (spec.role && !PERSON_ROLES[spec.role]) return;
             if (!spec.role && !LIST_KINDS[spec.kind]) return;
-            WS.spec = { role: spec.role || null, kind: spec.kind || null, pool: spec.pool || 'all', name };
+            WS.spec = { role: spec.role || null, kind: spec.kind || null, pool: spec.pool || 'all', name, y: /^\d{4}$/.test(String(spec.y || '')) ? String(spec.y) : null, t: ['both', 'Film', 'Série'].includes(spec.t) ? spec.t : null };
             const token = ++WS.token;
             const m = worksModal();
             m.classList.remove('is-under');
@@ -5494,13 +5733,909 @@ window.startStatsEnrichment = async () => {
         // Noms cliquables sur une fiche
         window.personLinks = (names, role) => names.map(n => `<button type="button" class="pv-person" onclick="event.stopPropagation(); ${window.worksTap({ role, name: n })}">${esc(n)}</button>`).join('<span class="pv-person-sep">, </span>');
 
+        /* --- J.11 PAGE « RECOMMANDATIONS » (rangées à faire défiler, comme Netflix) ---
+           Une catégorie à la fois (Films, Séries, Livres, Albums, YouTube). Rangées :
+             • Pour toi : d'après mes genres, pays, réalisateurs / auteurs / artistes les mieux notés ;
+             • Parce que tu as aimé… : une rangée par œuvre notée 9 ou 10 (les plus récentes) ;
+             • Tes amis ont adoré : noté 8+ par mes amis, ceux qui me ressemblent le plus d'abord ;
+             • Les classiques qui te manquent ; • Courts et efficaces ; • Le top MaBiblio (toute la communauté).
+           Tout ce qui est déjà dans ma bibliothèque (vu, en cours, wishlist) est retiré.
+           Économe : chaque rangée est calculée une fois puis gardée 12 h sur le téléphone ; YouTube ne
+           consomme que des requêtes « bon marché » ; une seule lecture par ami (sa vitrine « profile/reco »). */
+        const RC = window._reco = window._reco || { type: 'Film', mem: null, pending: new Map(), scroll: {}, loaded: false };
+        const RC_TTL = 12 * 3600 * 1000;
+        const RC_TYPES = ['Film', 'Série', 'Livre', 'Album', 'YouTube'];
+        const YT_KEY = 'AIzaSyDMgAfvbLUNqekx1D6V4kPsc1qnrSVvLco';
+        const recoLsKey = () => `mabiblio_reco_${window.currentUser ? window.currentUser.uid : ''}`;
+        const recoMem = () => {
+            if (!RC.mem || RC.memUid !== (window.currentUser && window.currentUser.uid)) {
+                RC.mem = new Map(); RC.memUid = window.currentUser && window.currentUser.uid;
+                try { const o = JSON.parse(localStorage.getItem(recoLsKey()) || '{}'); Object.entries(o || {}).forEach(([k, v]) => { if (v && Array.isArray(v.items) && Date.now() - num(v.at) < RC_TTL) RC.mem.set(k, v); }); } catch (e) { /* cache illisible */ }
+            }
+            return RC.mem;
+        };
+        let recoSaveTimer = null;
+        const saveRecoCache = () => {
+            clearTimeout(recoSaveTimer);
+            recoSaveTimer = setTimeout(() => {
+                const o = {};
+                [...recoMem().entries()].filter(([, v]) => !v.error).sort((a, b) => num(b[1].at) - num(a[1].at)).slice(0, 60).forEach(([k, v]) => { o[k] = v; });
+                try { localStorage.setItem(recoLsKey(), JSON.stringify(o)); } catch (e) { try { localStorage.removeItem(recoLsKey()); } catch (e2) {} }
+            }, 800);
+        };
+        // Œuvre « allégée » (ce qui sert à l'affichage et à l'ajout) + infos d'affichage à part (jamais enregistrées)
+        const RC_FIELDS = ['id', 'type', 'title', 'img', 'author', 'releaseDate', 'desc', 'genres', 'metricValue', 'olKey', 'source', 'platform', 'needsDetails', 'durationMin'];
+        const slim = (it) => { const o = {}; RC_FIELDS.forEach(k => { if (it[k] !== undefined && it[k] !== null && it[k] !== '') o[k] = k === 'desc' ? String(it[k]).slice(0, 500) : k === 'genres' ? (Array.isArray(it[k]) ? it[k].slice(0, 5) : []) : it[k]; }); return o; };
+        const wrap = (it, x) => ({ w: slim(it), x: x || null });
+
+        // ---- Ce que j'ai déjà (index reconstruit seulement quand ma bibliothèque change) ----
+        let ownedIdx = null, ownedFor = null;
+        const ownedIndex = () => {
+            if (ownedFor === window.myCollection && ownedIdx) return ownedIdx;
+            const ids = new Set(), titles = new Map(), books = new Set();
+            (window.myCollection || []).forEach(i => {
+                if (i.id) ids.add(`${i.type}|${i.id}`);
+                if (i.tmdbId) ids.add(`${i.type}|${i.tmdbId}`);
+                const t = titleKey(i.title);
+                if (t) { const k = `${i.type}|${t}`; if (!titles.has(k)) titles.set(k, new Set()); titles.get(k).add(yearOfRelease(i) || 0); }
+                if (i.type === 'Livre') books.add(bookKey(i.title, i.author));
+            });
+            ownedFor = window.myCollection; ownedIdx = { ids, titles, books };
+            return ownedIdx;
+        };
+        const isOwned = (it) => {
+            const o = ownedIndex();
+            if (it.id && o.ids.has(`${it.type}|${it.id}`)) return true;
+            const ys = o.titles.get(`${it.type}|${titleKey(it.title)}`);
+            if (ys) { const y = yearOfRelease(it); if (!y || ys.has(0) || [...ys].some(v => Math.abs(v - y) <= 1)) return true; }
+            return it.type === 'Livre' && o.books.has(bookKey(it.title, it.author));
+        };
+
+        // ---- Mes goûts pour une catégorie ----
+        const recoTaste = (type) => {
+            const rated = (window.myCollection || []).filter(i => i.type === type && isDone(i) && ratingOf(i) !== null);
+            const avg = avgRating(rated) ?? 7;
+            const lift = new Map();
+            tally(rated, i => type === 'Livre' ? bookGenreNames(i) : i.genres).forEach(g => lift.set(g.name, { n: g.n, avg: g.avg, score: g.n * 0.5 + ((g.avg ?? avg) - avg) * 1.5 }));
+            const topGenres = [...lift.entries()].filter(([, g]) => (g.avg ?? 0) >= avg - 0.5).sort((a, b) => b[1].score - a[1].score).map(([name]) => name);
+            const byDate = (a, b) => String(window.itemDateKey(b) || '').localeCompare(String(window.itemDateKey(a) || ''));
+            const seeds = rated.filter(i => ratingOf(i) >= 8).sort((a, b) => ratingOf(b) - ratingOf(a) || byDate(a, b));
+            const loved = rated.filter(i => ratingOf(i) >= 9).sort(byDate);
+            const people = tally(rated, i => type === 'Album' ? [String(i.author || '').trim()] : directorsOf(i)).filter(p => p.name && (p.avg ?? 0) >= 8).sort((a, b) => (b.n * 2 + b.avg) - (a.n * 2 + a.avg));
+            const countries = tally(rated, i => Array.isArray(i.countryCodes) ? i.countryCodes : []).filter(c => (c.avg ?? 0) >= avg).map(c => c.name);
+            return { rated, avg, lift, topGenres, seeds, loved, people, countries };
+        };
+        // ---- Sources ----
+        const tmdb = (path, params = '') => httpJson(`https://api.themoviedb.org/3/${path}?api_key=${TMDB_KEY}&language=fr-FR${params}`);
+        const tmdbGenreCache = {};
+        const tmdbGenres = (ep) => tmdbGenreCache[ep] || (tmdbGenreCache[ep] = tmdb(`genre/${ep}/list`).then(d => new Map(((d && d.genres) || []).map(g => [g.name, g.id]))).catch(() => { delete tmdbGenreCache[ep]; return new Map(); }));
+        const tmdbHit = (m, type) => ({ id: String(m.id), title: m.title || m.name || '', img: m.poster_path ? `https://image.tmdb.org/t/p/w300${m.poster_path}` : '', desc: String(m.overview || '').replace(/[\n\r]/g, ' '), type, releaseDate: m.release_date || m.first_air_date || '', metricValue: 0, author: '', needsDetails: true, _va: num(m.vote_average), _g: m.genre_ids || [], _oc: m.origin_country || [] });
+        const tmdbList = async (path, params, type) => { const d = await tmdb(path, params); return ((d && d.results) || []).filter(m => m && m.id && m.poster_path).map(m => tmdbHit(m, type)); };
+        const seedTmdbId = async (i) => /^\d+$/.test(String(i.tmdbId || '')) ? String(i.tmdbId) : tmdbIdFor(i);
+        const epOf = (type) => type === 'Film' ? 'movie' : 'tv';
+        const genreIds = async (type, names, max) => { const m = await tmdbGenres(epOf(type)); return names.map(n => m.get(n)).filter(Boolean).slice(0, max); };
+
+        // ---- Livres : « la sélection MaBiblio » (livres connus et appréciés), classée selon MES goûts ----
+        // [titre, auteur, année, genres, repères : c = classique, s = court (moins de 200 pages)]
+        const BOOK_SEL = [
+            ["La Vérité sur l'affaire Harry Quebert", 'Joël Dicker', 2012, 'Thriller|Policier|Fiction', ''],
+            ["L'Énigme de la chambre 622", 'Joël Dicker', 2020, 'Thriller|Policier|Fiction', ''],
+            ["L'Affaire Alaska Sanders", 'Joël Dicker', 2022, 'Thriller|Policier|Fiction', ''],
+            ['Le Livre des Baltimore', 'Joël Dicker', 2015, 'Fiction|Littérature', ''],
+            ['Nymphéas noirs', 'Michel Bussi', 2011, 'Thriller|Policier|Fiction', ''],
+            ['Un avion sans elle', 'Michel Bussi', 2012, 'Thriller|Policier|Fiction', ''],
+            ['Le Syndrome E', 'Franck Thilliez', 2010, 'Thriller|Policier|Fiction', ''],
+            ['Il était deux fois', 'Franck Thilliez', 2020, 'Thriller|Policier|Fiction', ''],
+            ['Le Manuscrit inachevé', 'Franck Thilliez', 2018, 'Thriller|Policier|Fiction', ''],
+            ['Les Rivières pourpres', 'Jean-Christophe Grangé', 1998, 'Thriller|Policier|Fiction', ''],
+            ['Le Chuchoteur', 'Donato Carrisi', 2009, 'Thriller|Policier|Fiction', ''],
+            ["Millénium 1 : Les hommes qui n'aimaient pas les femmes", 'Stieg Larsson', 2005, 'Thriller|Policier|Fiction', ''],
+            ['La Fille du train', 'Paula Hawkins', 2015, 'Thriller|Fiction', ''],
+            ['Les Apparences', 'Gillian Flynn', 2012, 'Thriller|Fiction', ''],
+            ['Shutter Island', 'Dennis Lehane', 2003, 'Thriller|Policier|Fiction', ''],
+            ['Le Silence des agneaux', 'Thomas Harris', 1988, 'Thriller|Horreur|Fiction', 'c'],
+            ['Pars vite et reviens tard', 'Fred Vargas', 2001, 'Policier|Fiction', ''],
+            ['Da Vinci Code', 'Dan Brown', 2003, 'Thriller|Aventure|Fiction', ''],
+            ['Le Bonhomme de neige', 'Jo Nesbø', 2007, 'Thriller|Policier|Fiction', ''],
+            ['La Patiente silencieuse', 'Alex Michaelides', 2019, 'Thriller|Fiction', ''],
+            ['Ne le dis à personne', 'Harlan Coben', 2001, 'Thriller|Fiction', ''],
+            ['Ils étaient dix', 'Agatha Christie', 1939, 'Policier|Classiques|Fiction', 'c'],
+            ["Le Crime de l'Orient-Express", 'Agatha Christie', 1934, 'Policier|Classiques|Fiction', 'c'],
+            ['Le Parfum', 'Patrick Süskind', 1985, 'Thriller|Historique|Fiction|Classiques', 'c'],
+            ['Le Nom de la rose', 'Umberto Eco', 1980, 'Historique|Policier|Classiques|Fiction', 'c'],
+            ['De sang-froid', 'Truman Capote', 1966, 'Faits divers|Policier|Classiques', 'c'],
+            ["L'Adversaire", 'Emmanuel Carrère', 2000, 'Faits divers|Littérature', 's'],
+            ["Changer l'eau des fleurs", 'Valérie Perrin', 2018, 'Fiction|Littérature|Romance', ''],
+            ['Trois', 'Valérie Perrin', 2021, 'Fiction|Littérature', ''],
+            ['Les Oubliés du dimanche', 'Valérie Perrin', 2015, 'Fiction|Littérature', ''],
+            ['La Tresse', 'Laetitia Colombani', 2017, 'Fiction|Littérature', ''],
+            ['Petit Pays', 'Gaël Faye', 2016, 'Fiction|Littérature|Historique', ''],
+            ["L'Anomalie", 'Hervé Le Tellier', 2020, 'Fiction|Littérature|Science-fiction', ''],
+            ['Veiller sur elle', 'Jean-Baptiste Andrea', 2023, 'Fiction|Littérature|Historique', ''],
+            ['Chanson douce', 'Leïla Slimani', 2016, 'Fiction|Littérature|Thriller', ''],
+            ['Au revoir là-haut', 'Pierre Lemaitre', 2013, 'Historique|Fiction|Littérature', ''],
+            ['Le Grand Monde', 'Pierre Lemaitre', 2022, 'Historique|Fiction', ''],
+            ['La Vie devant soi', 'Romain Gary', 1975, 'Fiction|Littérature|Classiques', 'c'],
+            ["La Promesse de l'aube", 'Romain Gary', 1960, 'Mémoires|Biographie|Littérature|Classiques', 'c'],
+            ["L'Élégance du hérisson", 'Muriel Barbery', 2006, 'Fiction|Littérature', ''],
+            ["Ensemble, c'est tout", 'Anna Gavalda', 2004, 'Fiction|Littérature|Romance', ''],
+            ['La Délicatesse', 'David Foenkinos', 2009, 'Fiction|Romance', ''],
+            ['Charlotte', 'David Foenkinos', 2014, 'Fiction|Littérature|Biographie', ''],
+            ['Les Choses humaines', 'Karine Tuil', 2019, 'Fiction|Littérature|Société', ''],
+            ['Le Mage du Kremlin', 'Giuliano da Empoli', 2022, 'Fiction|Politique|Littérature', ''],
+            ['Yoga', 'Emmanuel Carrère', 2020, 'Littérature|Mémoires', ''],
+            ['Le Royaume', 'Emmanuel Carrère', 2014, 'Littérature|Religion|Histoire', ''],
+            ['Limonov', 'Emmanuel Carrère', 2011, 'Littérature|Biographie', ''],
+            ['La Carte et le Territoire', 'Michel Houellebecq', 2010, 'Fiction|Littérature', ''],
+            ['Sérotonine', 'Michel Houellebecq', 2019, 'Fiction|Littérature', ''],
+            ['Les Années', 'Annie Ernaux', 2008, 'Littérature|Mémoires|Société', ''],
+            ['La Place', 'Annie Ernaux', 1983, 'Littérature|Mémoires', 's'],
+            ['Réparer les vivants', 'Maylis de Kerangal', 2014, 'Fiction|Littérature', ''],
+            ['Vernon Subutex 1', 'Virginie Despentes', 2015, 'Fiction|Littérature|Société', ''],
+            ['Les Gratitudes', 'Delphine de Vigan', 2019, 'Fiction|Littérature', 's'],
+            ["Rien ne s'oppose à la nuit", 'Delphine de Vigan', 2011, 'Littérature|Mémoires', ''],
+            ['La Plus Secrète Mémoire des hommes', 'Mohamed Mbougar Sarr', 2021, 'Fiction|Littérature', ''],
+            ['Il est grand temps de rallumer les étoiles', 'Virginie Grimaldi', 2018, 'Fiction|Romance', ''],
+            ['Le Parfum du bonheur est plus fort sous la pluie', 'Virginie Grimaldi', 2017, 'Fiction|Romance', ''],
+            ["L'Amie prodigieuse", 'Elena Ferrante', 2011, 'Fiction|Littérature', ''],
+            ['Cent ans de solitude', 'Gabriel García Márquez', 1967, 'Fiction|Littérature|Classiques', 'c'],
+            ['Kafka sur le rivage', 'Haruki Murakami', 2002, 'Fiction|Littérature|Fantasy', ''],
+            ['Les Piliers de la terre', 'Ken Follett', 1989, 'Historique|Fiction', ''],
+            ['Les Bienveillantes', 'Jonathan Littell', 2006, 'Historique|Guerre|Littérature', ''],
+            ['Suite française', 'Irène Némirovsky', 2004, 'Historique|Guerre|Littérature', ''],
+            ["L'Alchimiste", 'Paulo Coelho', 1988, 'Fiction|Développement personnel', 's'],
+            ['Le Vieux qui lisait des romans d\'amour', 'Luis Sepúlveda', 1992, 'Fiction|Aventure', 's'],
+            ['Avant toi', 'Jojo Moyes', 2012, 'Romance|Fiction', ''],
+            ['Un jour', 'David Nicholls', 2009, 'Romance|Fiction', ''],
+            ['Normal People', 'Sally Rooney', 2018, 'Romance|Fiction|Littérature', ''],
+            ["Les Sept Maris d'Evelyn Hugo", 'Taylor Jenkins Reid', 2017, 'Romance|Fiction|Historique', ''],
+            ['Nos étoiles contraires', 'John Green', 2012, 'Young adult|Romance|Fiction', ''],
+            ['Orgueil et Préjugés', 'Jane Austen', 1813, 'Romance|Classiques|Fiction', 'c'],
+            ['Les Hauts de Hurlevent', 'Emily Brontë', 1847, 'Romance|Classiques|Fiction', 'c'],
+            ['Jane Eyre', 'Charlotte Brontë', 1847, 'Romance|Classiques|Fiction', 'c'],
+            ['Le Comte de Monte-Cristo', 'Alexandre Dumas', 1844, 'Aventure|Historique|Classiques|Fiction', 'c'],
+            ['Les Misérables', 'Victor Hugo', 1862, 'Classiques|Historique|Fiction', 'c'],
+            ['Germinal', 'Émile Zola', 1885, 'Classiques|Fiction|Société', 'c'],
+            ['Madame Bovary', 'Gustave Flaubert', 1857, 'Classiques|Fiction', 'c'],
+            ['Le Rouge et le Noir', 'Stendhal', 1830, 'Classiques|Fiction', 'c'],
+            ['Bel-Ami', 'Guy de Maupassant', 1885, 'Classiques|Fiction', 'c'],
+            ['Le Horla', 'Guy de Maupassant', 1887, 'Classiques|Horreur|Nouvelles', 'cs'],
+            ["L'Étranger", 'Albert Camus', 1942, 'Classiques|Littérature|Philosophie', 'cs'],
+            ['La Peste', 'Albert Camus', 1947, 'Classiques|Littérature', 'c'],
+            ['Le Mythe de Sisyphe', 'Albert Camus', 1942, 'Philosophie|Essai|Classiques', 'cs'],
+            ['Le Petit Prince', 'Antoine de Saint-Exupéry', 1943, 'Classiques|Jeunesse|Fiction', 'cs'],
+            ['Des souris et des hommes', 'John Steinbeck', 1937, 'Classiques|Fiction', 'cs'],
+            ['Le Vieil Homme et la Mer', 'Ernest Hemingway', 1952, 'Classiques|Fiction|Aventure', 'cs'],
+            ["Le Joueur d'échecs", 'Stefan Zweig', 1943, 'Classiques|Nouvelles|Fiction', 'cs'],
+            ['La Métamorphose', 'Franz Kafka', 1915, 'Classiques|Fiction|Nouvelles', 'cs'],
+            ['Inconnu à cette adresse', 'Kressmann Taylor', 1938, 'Classiques|Historique|Fiction', 'cs'],
+            ['Bonjour tristesse', 'Françoise Sagan', 1954, 'Classiques|Romance|Fiction', 'cs'],
+            ['Candide', 'Voltaire', 1759, 'Classiques|Philosophie|Humour', 'cs'],
+            ['Gatsby le Magnifique', 'F. Scott Fitzgerald', 1925, 'Classiques|Fiction|Romance', 'cs'],
+            ["L'Attrape-cœurs", 'J. D. Salinger', 1951, 'Classiques|Fiction', 'c'],
+            ["Ne tirez pas sur l'oiseau moqueur", 'Harper Lee', 1960, 'Classiques|Fiction|Société', 'c'],
+            ['Siddhartha', 'Hermann Hesse', 1922, 'Classiques|Philosophie|Fiction', 'cs'],
+            ['Les Fleurs du mal', 'Charles Baudelaire', 1857, 'Poésie|Classiques', 'c'],
+            ['Dracula', 'Bram Stoker', 1897, 'Horreur|Classiques|Fiction', 'c'],
+            ['Frankenstein', 'Mary Shelley', 1818, 'Horreur|Science-fiction|Classiques', 'c'],
+            ['Shining', 'Stephen King', 1977, 'Horreur|Thriller|Fiction', 'c'],
+            ['Ça', 'Stephen King', 1986, 'Horreur|Fiction', ''],
+            ['1984', 'George Orwell', 1949, 'Dystopie|Science-fiction|Classiques|Politique', 'c'],
+            ['La Ferme des animaux', 'George Orwell', 1945, 'Classiques|Politique|Fiction', 'cs'],
+            ['Le Meilleur des mondes', 'Aldous Huxley', 1932, 'Dystopie|Science-fiction|Classiques', 'c'],
+            ['Fahrenheit 451', 'Ray Bradbury', 1953, 'Dystopie|Science-fiction|Classiques', 'cs'],
+            ['La Servante écarlate', 'Margaret Atwood', 1985, 'Dystopie|Science-fiction|Fiction', ''],
+            ['La Route', 'Cormac McCarthy', 2006, 'Dystopie|Fiction|Littérature', ''],
+            ['Ravage', 'René Barjavel', 1943, 'Science-fiction|Classiques|Dystopie', 'c'],
+            ['La Nuit des temps', 'René Barjavel', 1968, 'Science-fiction|Romance|Classiques', 'c'],
+            ['Dune', 'Frank Herbert', 1965, 'Science-fiction|Classiques|Aventure', 'c'],
+            ['Fondation', 'Isaac Asimov', 1951, 'Science-fiction|Classiques', 'c'],
+            ['Le Problème à trois corps', 'Liu Cixin', 2008, 'Science-fiction', ''],
+            ['Projet Dernière Chance', 'Andy Weir', 2021, 'Science-fiction|Aventure', ''],
+            ['Seul sur Mars', 'Andy Weir', 2011, 'Science-fiction|Aventure', ''],
+            ['Hypérion', 'Dan Simmons', 1989, 'Science-fiction', 'c'],
+            ['Le Guide du voyageur galactique', 'Douglas Adams', 1979, 'Science-fiction|Humour|Classiques', 'c'],
+            ['La Horde du Contrevent', 'Alain Damasio', 2004, 'Science-fiction|Fantasy', ''],
+            ['La Communauté de l\'anneau', 'J. R. R. Tolkien', 1954, 'Fantasy|Classiques|Aventure', 'c'],
+            ['Le Hobbit', 'J. R. R. Tolkien', 1937, 'Fantasy|Classiques|Jeunesse', 'c'],
+            ["Harry Potter à l'école des sorciers", 'J. K. Rowling', 1997, 'Fantasy|Jeunesse', ''],
+            ['Le Nom du vent', 'Patrick Rothfuss', 2007, 'Fantasy', ''],
+            ['Le Trône de fer', 'George R. R. Martin', 1996, 'Fantasy', ''],
+            ['Le Sorceleur : Le Dernier Vœu', 'Andrzej Sapkowski', 1993, 'Fantasy|Nouvelles', ''],
+            ["Fils-des-Brumes : L'Empire ultime", 'Brandon Sanderson', 2006, 'Fantasy', ''],
+            ["La Passe-miroir : Les Fiancés de l'hiver", 'Christelle Dabos', 2013, 'Fantasy|Young adult', ''],
+            ['Les Royaumes du Nord', 'Philip Pullman', 1995, 'Fantasy|Jeunesse', ''],
+            ['Hunger Games', 'Suzanne Collins', 2008, 'Young adult|Dystopie|Science-fiction', ''],
+            ['Divergente', 'Veronica Roth', 2011, 'Young adult|Dystopie', ''],
+            ['Wonder', 'R. J. Palacio', 2012, 'Jeunesse|Fiction', ''],
+            ['Le Monde de Sophie', 'Jostein Gaarder', 1991, 'Philosophie|Jeunesse|Fiction', ''],
+            ['Le Petit Nicolas', 'René Goscinny', 1959, 'Jeunesse|Humour|Classiques', 'cs'],
+            ["Si c'est un homme", 'Primo Levi', 1947, 'Mémoires|Histoire|Classiques', 'c'],
+            ['La Nuit', 'Elie Wiesel', 1958, 'Mémoires|Histoire|Classiques', 'cs'],
+            ["Le Journal d'Anne Frank", 'Anne Frank', 1947, 'Mémoires|Histoire|Classiques', 'c'],
+            ['Les Mots', 'Jean-Paul Sartre', 1964, 'Mémoires|Classiques|Philosophie', 'cs'],
+            ["Mémoires d'une jeune fille rangée", 'Simone de Beauvoir', 1958, 'Mémoires|Classiques', 'c'],
+            ['Devenir', 'Michelle Obama', 2018, 'Biographie|Mémoires|Politique', ''],
+            ['Steve Jobs', 'Walter Isaacson', 2011, 'Biographie|Économie', ''],
+            ['Le Lambeau', 'Philippe Lançon', 2018, 'Mémoires|Littérature', ''],
+            ["Sapiens : Une brève histoire de l'humanité", 'Yuval Noah Harari', 2011, 'Histoire|Essai|Sciences', ''],
+            ['Une brève histoire du temps', 'Stephen Hawking', 1988, 'Sciences|Essai', 'c'],
+            ["L'homme qui prenait sa femme pour un chapeau", 'Oliver Sacks', 1985, 'Psychologie|Sciences|Essai', ''],
+            ['Système 1 / Système 2', 'Daniel Kahneman', 2011, 'Psychologie|Économie|Essai', ''],
+            ['Factfulness', 'Hans Rosling', 2018, 'Société|Essai|Sciences', ''],
+            ['Le Deuxième Sexe', 'Simone de Beauvoir', 1949, 'Philosophie|Essai|Société|Classiques', 'c'],
+            ['Ainsi parlait Zarathoustra', 'Friedrich Nietzsche', 1883, 'Philosophie|Classiques', 'c'],
+            ['Le Capital au XXIe siècle', 'Thomas Piketty', 2013, 'Économie|Essai|Politique', ''],
+            ['Les Quatre Accords toltèques', 'Don Miguel Ruiz', 1997, 'Développement personnel', 's'],
+            ['Le Pouvoir du moment présent', 'Eckhart Tolle', 1997, 'Développement personnel|Philosophie', ''],
+            ['Un rien peut tout changer', 'James Clear', 2018, 'Développement personnel|Psychologie', ''],
+            ["Ta deuxième vie commence quand tu comprends que tu n'en as qu'une", 'Raphaëlle Giordano', 2015, 'Développement personnel|Fiction', ''],
+            ['Ikigai', 'Héctor García', 2016, 'Développement personnel', 's'],
+            ["L'Arabe du futur", 'Riad Sattouf', 2014, 'BD & romans graphiques|Mémoires|Humour', 's'],
+            ['Persepolis', 'Marjane Satrapi', 2000, 'BD & romans graphiques|Mémoires|Histoire', ''],
+            ['Maus', 'Art Spiegelman', 1986, 'BD & romans graphiques|Histoire|Classiques', 'c'],
+            ['Blacksad', 'Juan Díaz Canales', 2000, 'BD & romans graphiques|Policier', 's'],
+            ['Le Monde sans fin', 'Christophe Blain', 2021, 'BD & romans graphiques|Sciences|Société', ''],
+            ['Watchmen', 'Alan Moore', 1986, 'BD & romans graphiques|Science-fiction|Classiques', 'c'],
+            ['Les Vieux Fourneaux', 'Wilfrid Lupano', 2014, 'BD & romans graphiques|Humour', 's'],
+            ['Astérix le Gaulois', 'René Goscinny', 1961, 'BD & romans graphiques|Humour|Jeunesse|Classiques', 'cs'],
+            ['One Piece, tome 1', 'Eiichirō Oda', 1997, 'Manga|Aventure', 's'],
+            ["L'Attaque des Titans, tome 1", 'Hajime Isayama', 2009, 'Manga|Fantasy', 's'],
+            ['Death Note, tome 1', 'Tsugumi Ohba', 2003, 'Manga|Thriller', 's'],
+            ['Naruto, tome 1', 'Masashi Kishimoto', 1999, 'Manga|Aventure', 's'],
+            ['Akira, tome 1', 'Katsuhiro Ōtomo', 1982, 'Manga|Science-fiction|Classiques', 'c']
+        ].map(([title, author, y, g, f]) => ({ title, author, y, genres: g.split('|'), classic: f.includes('c'), short: f.includes('s') }));
+        // Couvertures : retrouvées une fois sur Open Library, puis gardées 60 jours sur le téléphone
+        const COV_KEY = 'mabiblio_bookcov';
+        let covMem = null;
+        const covStore = () => { if (!covMem) { try { covMem = JSON.parse(localStorage.getItem(COV_KEY) || '{}') || {}; } catch (e) { covMem = {}; } } return covMem; };
+        const covSave = () => { try { localStorage.setItem(COV_KEY, JSON.stringify(covStore())); } catch (e) {} };
+        const selKey = (b) => bookKey(b.title, b.author);
+        const selItem = (b) => {
+            const c = covStore()[selKey(b)];
+            const ol = c && c.k ? String(c.k) : '';
+            return { id: ol ? 'ol_' + ol.replace('/works/', '') : 'sel_' + titleKey(b.title).replace(/ /g, '_').slice(0, 40), olKey: ol, title: b.title, author: b.author, img: c && c.i ? `https://covers.openlibrary.org/b/id/${c.i}-M.jpg` : '',
+                desc: '', type: 'Livre', releaseDate: String(b.y), genres: b.genres, metricValue: c && c.p ? c.p : 0, source: 'openlibrary', needsDetails: !!ol };
+        };
+        const resolveCovers = async (books) => {
+            const store = covStore();
+            const todo = books.filter(b => { const c = store[selKey(b)]; return !c || (!c.i && Date.now() - num(c.at) > 7 * 86400000); });
+            let k = 0;
+            const worker = async () => {
+                while (k < todo.length) {
+                    const b = todo[k++];
+                    try {
+                        const d = await httpJson(`https://openlibrary.org/search.json?title=${encodeURIComponent(b.title)}&author=${encodeURIComponent(b.author)}&lang=fr&limit=1&fields=key,cover_i,number_of_pages_median`);
+                        const x = d && d.docs && d.docs[0];
+                        store[selKey(b)] = { i: x && x.cover_i ? x.cover_i : 0, k: x && x.key ? x.key : '', p: x && x.number_of_pages_median ? x.number_of_pages_median : 0, at: Date.now() };
+                    } catch (e) { /* réessayé une autre fois */ }
+                }
+            };
+            await Promise.all([worker(), worker(), worker(), worker()]);
+            covSave();
+        };
+        // Note d'un livre de la sélection pour moi : mes genres préférés, mes auteurs préférés, et un peu de nouveauté
+        const selScore = (b, T, extraGenres) => {
+            let s = 0;
+            b.genres.forEach(g => { const l = T.lift.get(g); if (l) s += Math.max(-1, l.score); if (extraGenres && extraGenres.includes(g)) s += 2; });
+            if (T.people.some(p => personKey(p.name) === personKey(b.author))) s += 3;
+            return s + (b.y >= 2010 ? 0.3 : 0);
+        };
+        const selRow = async (T, { filter = () => true, extraGenres = null, max = 24, author = null } = {}) => {
+            let list = BOOK_SEL.filter(filter).map(b => ({ b, s: selScore(b, T, extraGenres) + (author && personKey(b.author) === personKey(author) ? 4 : 0) }))
+                .sort((x, y) => y.s - x.s).map(x => x.b);
+            list = list.filter(b => !isOwned({ type: 'Livre', title: b.title, author: b.author }));
+            const pick = list.slice(0, max);
+            await resolveCovers(pick);
+            return pick.map(selItem);
+        };
+
+        const dzArtistId = async (name) => {
+            const s = await window.deezerJSONP(`https://api.deezer.com/search/artist?q=${encodeURIComponent(name)}&limit=5`);
+            const want = personKey(name); const list = (s && s.data) || [];
+            const a = list.find(x => personKey(x.name) === want) || list[0];
+            return a ? String(a.id) : null;
+        };
+        const dzBestAlbum = async (artistId, artistName) => {
+            const al = await window.deezerJSONP(`https://api.deezer.com/artist/${encodeURIComponent(artistId)}/albums?limit=50`);
+            const list = ((al && al.data) || []).filter(x => x && x.id && x.record_type === 'album').sort((a, b) => num(b.fans) - num(a.fans));
+            const x = list[0];
+            return x ? { id: String(x.id), title: x.title, img: x.cover_xl || x.cover_big || x.cover_medium || '', desc: '', type: 'Album', releaseDate: x.release_date || '', metricValue: 0, author: artistName || '', platform: 'Deezer', needsDetails: true } : null;
+        };
+
+        const ytFetch = async (path) => { const r = await fetch(`https://www.googleapis.com/youtube/v3/${path}&key=${YT_KEY}`); if (!r.ok) throw new Error('YouTube ' + r.status); return r.json(); };
+        const ytMinutes = (iso) => { const m = String(iso || '').match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/); return m ? num(m[1]) * 60 + num(m[2]) + (num(m[3]) > 30 ? 1 : 0) : 0; };
+        // Chaînes de mes vidéos (1 requête pour 50 vidéos)
+        const ytChannels = async () => {
+            const vids = (window.myCollection || []).filter(i => i.type === 'YouTube' && /^[A-Za-z0-9_-]{6,20}$/.test(String(i.id || ''))).sort((a, b) => (ratingOf(b) || 0) - (ratingOf(a) || 0)).slice(0, 50);
+            if (!vids.length) return new Map();
+            const d = await ytFetch(`videos?part=snippet&id=${vids.map(v => v.id).join(',')}`);
+            const map = new Map();
+            ((d && d.items) || []).forEach(v => map.set(v.id, { ch: v.snippet && v.snippet.channelId, name: v.snippet && v.snippet.channelTitle }));
+            return map;
+        };
+        const ytUploads = async (channelId) => {
+            if (!/^UC[A-Za-z0-9_-]{10,40}$/.test(String(channelId || ''))) return [];
+            const d = await ytFetch(`playlistItems?part=snippet&maxResults=20&playlistId=UU${channelId.slice(2)}`);
+            return ((d && d.items) || []).map(p => p.snippet).filter(s => s && s.resourceId && s.resourceId.videoId && s.title !== 'Private video' && s.title !== 'Deleted video').map(s => ({
+                id: s.resourceId.videoId, title: s.title, img: (s.thumbnails && (s.thumbnails.high || s.thumbnails.medium || s.thumbnails.default) || {}).url || '', desc: String(s.description || '').slice(0, 400),
+                type: 'YouTube', releaseDate: s.publishedAt || '', metricValue: 0, author: s.videoOwnerChannelTitle || s.channelTitle || '', platform: 'YouTube'
+            }));
+        };
+        const ytDurations = async (list) => {
+            const ids = list.map(v => v.id).slice(0, 50);
+            if (!ids.length) return list;
+            const d = await ytFetch(`videos?part=contentDetails&id=${ids.join(',')}`);
+            const m = new Map(((d && d.items) || []).map(v => [v.id, ytMinutes(v.contentDetails && v.contentDetails.duration)]));
+            list.forEach(v => { if (m.has(v.id)) v.metricValue = m.get(v.id); });
+            return list;
+        };
+
+        // ---- Fusion + classement ----
+        const merge = (lists, keyOf = (i) => `${i.type}|${i.id || titleKey(i.title)}`) => {
+            const m = new Map();
+            lists.forEach(({ items, weight = 1 }) => (items || []).forEach((it, k) => {
+                if (!it || !it.title) return;
+                const key = keyOf(it);
+                const cur = m.get(key) || { it, hits: 0, rank: 0 };
+                cur.hits += weight; cur.rank += Math.max(0, 1 - k / 25) * weight;
+                if (!cur.it.img && it.img) cur.it.img = it.img;
+                m.set(key, cur);
+            }));
+            return [...m.values()];
+        };
+        const fresh = (list, max = 24) => list.filter(e => (e.it || e).img && !isOwned(e.it || e)).slice(0, max);
+
+        // Pour toi
+        const buildForYou = async (type) => {
+            const T = recoTaste(type);
+            if (type === 'Film' || type === 'Série') {
+                const ep = epOf(type);
+                const seeds = T.seeds.slice(0, 6);
+                const ids = (await Promise.all(seeds.map(s => seedTmdbId(s).catch(() => null)))).filter(Boolean);
+                const gids = await genreIds(type, T.topGenres, 2);
+                const jobs = [
+                    ...ids.map(id => tmdbList(`${ep}/${id}/recommendations`, '', type).then(items => ({ items, weight: 1.2 }))),
+                    ...gids.map(g => tmdbList(`discover/${ep}`, `&with_genres=${g}&sort_by=popularity.desc&vote_count.gte=${ep === 'movie' ? 300 : 100}&vote_average.gte=6.8`, type).then(items => ({ items, weight: 0.8 }))),
+                    ...T.people.slice(0, 2).map(p => loadPerson(type === 'Film' ? 'director' : 'creator', p.name).then(d => ({ items: (d.works || []).filter(w => w.type === type), weight: 1.5 })))
+                ];
+                if (!jobs.length) jobs.push(tmdbList(`trending/${ep}/week`, '', type).then(items => ({ items })));
+                const lists = (await Promise.allSettled(jobs)).filter(r => r.status === 'fulfilled').map(r => r.value);
+                const gm = await tmdbGenres(ep); const byId = new Map([...gm.entries()].map(([n, id]) => [id, n]));
+                const scored = merge(lists).map(e => {
+                    const gs = (e.it._g || []).map(id => T.lift.get(byId.get(id))).filter(Boolean);
+                    const gFit = gs.length ? gs.reduce((a, g) => a + g.score, 0) / gs.length : 0;
+                    const cFit = (e.it._oc || []).some(c => T.countries.includes(c)) ? 0.6 : 0;
+                    return { ...e, s: e.hits * 1.4 + e.rank + (e.it._va || 6.5) * 0.35 + gFit * 0.5 + cFit };
+                }).sort((a, b) => b.s - a.s);
+                return fresh(scored.map(e => e.it)).map(it => wrap(it));
+            }
+            if (type === 'Livre') {
+                // La sélection classée selon mes goûts, avec de temps en temps un autre livre d'un auteur que j'adore
+                const sel = await selRow(T, { max: 20 });
+                const fav = (await Promise.allSettled(T.people.slice(0, 2).map(a => loadPerson('author', a.name))))
+                    .flatMap(r => r.status === 'fulfilled' ? (r.value.works || []).slice(0, 3) : []).filter(b => b.img && !isOwned(b));
+                const seen = new Set(sel.map(b => bookKey(b.title, b.author)));
+                const out = [];
+                sel.forEach((b, k) => { out.push(b); if (k % 4 === 3 && fav.length) { const f = fav.shift(); if (!seen.has(bookKey(f.title, f.author))) { seen.add(bookKey(f.title, f.author)); out.push(f); } } });
+                return out.slice(0, 24).map(it => wrap(it));
+            }
+            if (type === 'Album') {
+                const artists = T.people.slice(0, 3);
+                const ids = (await Promise.all(artists.map(a => dzArtistId(a.name).catch(() => null)))).filter(Boolean);
+                const lists = (await Promise.allSettled(ids.map(id => loadRelatedAlbums(id, {}).then(items => ({ items }))))).filter(r => r.status === 'fulfilled').map(r => r.value);
+                if (!lists.length) { const c = await window.deezerJSONP('https://api.deezer.com/chart/0/albums?limit=30'); lists.push({ items: ((c && c.data) || []).map(x => ({ id: String(x.id), title: x.title, img: x.cover_xl || x.cover_big || '', type: 'Album', author: x.artist ? x.artist.name : '', platform: 'Deezer', needsDetails: true })) }); }
+                return fresh(merge(lists).sort((a, b) => (b.hits + b.rank) - (a.hits + a.rank)).map(e => e.it)).map(it => wrap(it));
+            }
+            if (type === 'YouTube') {
+                const chans = await ytChannels();
+                const score = new Map();
+                T.rated.forEach(v => { const c = chans.get(v.id); if (c && c.ch) score.set(c.ch, (score.get(c.ch) || 0) + (ratingOf(v) - 5)); });
+                const top = [...score.entries()].sort((a, b) => b[1] - a[1]).slice(0, 4).map(([ch]) => ch);
+                const lists = (await Promise.allSettled(top.map(ch => ytUploads(ch)))).filter(r => r.status === 'fulfilled').map(r => r.value);
+                const all = lists.flat().sort((a, b) => String(b.releaseDate).localeCompare(String(a.releaseDate)));
+                const list = fresh(all, 30);
+                await ytDurations(list).catch(() => list);
+                return list.map(it => wrap(it));
+            }
+            return [];
+        };
+
+        // Parce que tu as aimé… (une œuvre précise)
+        const buildBecause = async (seed) => {
+            const type = seed.type;
+            if (type === 'Film' || type === 'Série') {
+                const id = await seedTmdbId(seed);
+                if (!id) return [];
+                let items = await tmdbList(`${epOf(type)}/${id}/recommendations`, '', type);
+                if (items.length < 6) items = items.concat(await tmdbList(`${epOf(type)}/${id}/similar`, '', type));
+                return fresh(items, 20).map(it => wrap(it));
+            }
+            if (type === 'Livre') {
+                const author = String(seed.author || '').split(',')[0].trim();
+                const me = bookKey(seed.title, seed.author);
+                const T = recoTaste('Livre');
+                const sel = await selRow(T, { extraGenres: bookGenreNames(seed), author, filter: b => bookKey(b.title, b.author) !== me, max: 16 });
+                const same = author && author !== 'Inconnu' ? ((await loadPerson('author', author)).works || []).filter(b => b.img && bookKey(b.title, b.author) !== me && !isOwned(b)).slice(0, 4) : [];
+                const seen = new Set();
+                return [...same, ...sel].filter(b => { const k = bookKey(b.title, b.author); if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, 20).map(it => wrap(it));
+            }
+            if (type === 'Album') {
+                const a = await loadAlbumExtras(seed);
+                let artistId = a.artistId;
+                if (!artistId && seed.author) artistId = await dzArtistId(seed.author);
+                if (!artistId) return [];
+                return fresh(await loadRelatedAlbums(artistId, seed), 20).map(it => wrap(it));
+            }
+            if (type === 'YouTube') {
+                const chans = await ytChannels();
+                const c = chans.get(seed.id);
+                if (!c || !c.ch) return [];
+                const list = fresh(await ytUploads(c.ch), 20);
+                await ytDurations(list).catch(() => list);
+                return list.map(it => wrap(it));
+            }
+            return [];
+        };
+
+        // Les classiques qui te manquent
+        const buildClassics = async (type) => {
+            const T = recoTaste(type);
+            if (type === 'Film' || type === 'Série') {
+                const ep = epOf(type);
+                const gids = await genreIds(type, T.topGenres, 2);
+                const base = `&sort_by=vote_count.desc&vote_average.gte=${ep === 'movie' ? 7.5 : 7.8}`;
+                const lists = gids.length ? await Promise.all(gids.map(g => tmdbList(`discover/${ep}`, `${base}&with_genres=${g}`, type))) : [await tmdbList(`discover/${ep}`, base, type)];
+                // On alterne les genres pour garder du mélange
+                const out = []; for (let k = 0; k < 20; k++) lists.forEach(l => { if (l[k]) out.push(l[k]); });
+                return fresh(merge([{ items: out }]).map(e => e.it)).map(it => wrap(it));
+            }
+            if (type === 'Livre') {
+                return (await selRow(T, { filter: b => b.classic })).map(it => wrap(it));
+            }
+            if (type === 'Album') {
+                const list = await window.deezerJSONP('https://api.deezer.com/genre?');
+                const ids = new Map((((list && list.data) || [])).map(g => [g.name, g.id]));
+                const gid = T.topGenres.map(n => ids.get(n)).find(Boolean) || 0;
+                const art = await window.deezerJSONP(`https://api.deezer.com/genre/${encodeURIComponent(gid)}/artists?limit=12`);
+                const artists = ((art && art.data) || []).slice(0, 12);
+                const albums = (await Promise.allSettled(artists.map(a => dzBestAlbum(a.id, a.name)))).map(r => r.status === 'fulfilled' ? r.value : null).filter(Boolean);
+                return fresh(albums).map(it => wrap(it));
+            }
+            return null; // pas de « classiques » pour YouTube
+        };
+
+        // Courts et efficaces
+        const buildShort = async (type) => {
+            const T = recoTaste(type);
+            if (type === 'Film') {
+                const gids = await genreIds(type, T.topGenres, 3);
+                const items = await tmdbList('discover/movie', `&with_runtime.lte=90&with_runtime.gte=40&sort_by=vote_average.desc&vote_count.gte=400${gids.length ? '&with_genres=' + gids.join('%7C') : ''}`, type);
+                return fresh(items).map(it => wrap(it, { short: '≤ 1 h 30' }));
+            }
+            if (type === 'Série') {
+                const gids = await genreIds(type, T.topGenres, 3);
+                const items = await tmdbList('discover/tv', `&with_type=2&sort_by=vote_average.desc&vote_count.gte=80${gids.length ? '&with_genres=' + gids.join('%7C') : ''}`, type);
+                return fresh(items).map(it => wrap(it, { short: 'Mini-série' }));
+            }
+            if (type === 'Livre') {
+                return (await selRow(T, { filter: b => b.short })).map(it => wrap(it, { short: num(it.metricValue) && num(it.metricValue) < 200 ? `${num(it.metricValue)} p.` : 'Court' }));
+            }
+            if (type === 'YouTube') {
+                const pool = await rowItems(`fy:YouTube`, () => buildForYou('YouTube'));
+                return (pool || []).filter(e => num(e.w.metricValue) > 0 && num(e.w.metricValue) <= 10).map(e => wrap(e.w, { short: `${num(e.w.metricValue)} min` }));
+            }
+            return null; // pas de rangée « courts » pour les albums
+        };
+
+        // Tes amis ont adoré : vitrine de chaque ami (1 lecture), sinon son résumé de stats
+        const TYPE_FROM = { F: 'Film', S: 'Série', L: 'Livre', A: 'Album', Y: 'YouTube' };
+        const guessImg = (type, id) => {
+            id = String(id || '');
+            if (type === 'YouTube' && /^[A-Za-z0-9_-]{6,20}$/.test(id)) return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+            if (type === 'Album' && /^\d+$/.test(id)) return `https://api.deezer.com/album/${id}/image`;
+            if (type === 'Livre' && /^[A-Za-z0-9_-]{10,14}$/.test(id) && !/^ol_|^OL/.test(id)) return `https://books.google.com/books/content?id=${encodeURIComponent(id)}&printsec=frontcover&img=1&zoom=1`;
+            return '';
+        };
+        // Œuvres notées 8+ par mes amis, sans aucune lecture en plus : la vitrine est rangée dans leur profil
+        // (déjà chargé) ; sinon leur bibliothèque si elle a déjà été lue (onglet Amis), sinon leur résumé de stats.
+        const rawProfile = (uid) => (window.followingData || []).find(p => (p.uid || p.id) === uid) || {};
+        const friendsLoved = () => {
+            const out = [];
+            statsFriends().forEach(f => {
+                const sc = rawProfile(f.uid).recoShowcase;
+                const full = ST.friendItems[f.uid];
+                let list;
+                if (sc && Array.isArray(sc.items)) list = sc.items.map(x => ({ type: TYPE_FROM[x.k], id: String(x.i || ''), title: String(x.t || ''), img: String(x.m || ''), author: String(x.a || ''), releaseDate: x.y ? String(x.y) : '', r: num(x.r) }));
+                else if (full && full.items && !full.error) list = full.items.filter(i => isDone(i) && (ratingOf(i) || 0) >= 8).map(i => ({ type: i.type, id: /^manual_|_public$/.test(String(i.id || '')) ? '' : String(i.id || ''), title: String(i.title || ''), img: String(i.img || ''), author: String(i.author || ''), releaseDate: String(i.releaseDate || ''), r: ratingOf(i) }));
+                else {
+                    const s = friendSummary(f) || f.summary;
+                    list = s ? parseSummaryWorks(s).filter(w => (w.rating || 0) >= 8).map(w => ({ type: w.type, id: w.id, title: w.title, img: guessImg(w.type, w.id), author: '', releaseDate: '', r: w.rating, _titleOnly: true })) : [];
+                }
+                list.filter(x => x.type && x.title && x.r >= 8).forEach(x => out.push({ w: { ...slim(x), _titleOnly: x._titleOnly ? 1 : undefined }, x: { uid: f.uid, r: x.r } }));
+            });
+            return out;
+        };
+        const posterCache = new Map();
+        // Affinité avec un ami, recalculée seulement si sa bibliothèque ou la mienne a changé
+        const friendAffinity = (f) => {
+            const a = window.affinityLight(f);
+            return a && a.rated >= 3 && a.pct !== null ? a.pct / 100 : 0.5;
+        };
+        const buildFriendsRow = async (type) => {
+            const all = friendsLoved();
+            // Affinité avec chaque ami (même calcul que l'onglet Amis), gardée en mémoire
+            const aff = new Map();
+            statsFriends().forEach(f => aff.set(f.uid, friendAffinity(f)));
+            // Regroupement en un seul passage : même identifiant OU même titre = même œuvre
+            const byId = new Map(), byTitle = new Map(), groups = [];
+            (all || []).forEach(e => {
+                if (e.w.type !== type) return;
+                const tk = titleKey(e.w.title);
+                let g = (e.w.id && byId.get(e.w.id)) || byTitle.get(tk);
+                if (!g) { g = { w: e.w, by: [] }; groups.push(g); }
+                if (e.w.id && !byId.has(e.w.id)) byId.set(e.w.id, g);
+                if (tk && !byTitle.has(tk)) byTitle.set(tk, g);
+                if (!g.w.img && e.w.img) g.w = { ...g.w, img: e.w.img };
+                if (g.w._titleOnly && !e.w._titleOnly) g.w = e.w;
+                if (!g.by.some(b => b.uid === e.x.uid)) g.by.push(e.x);
+            });
+            const ranked = groups.filter(g => !isOwned(g.w)).map(g => ({ ...g, s: g.by.reduce((a, b) => a + (b.r - 6) * (0.4 + (aff.get(b.uid) ?? 0.5)), 0) }))
+                .sort((a, b) => b.s - a.s).slice(0, 24);
+            // Films / séries connus seulement par leur numéro : on va chercher l'affiche (20 au plus)
+            await Promise.all(ranked.filter(g => !g.w.img && (type === 'Film' || type === 'Série') && /^\d+$/.test(String(g.w.id))).slice(0, 20).map(async g => {
+                const pk = `${type}|${g.w.id}`;
+                try {
+                    if (!posterCache.has(pk)) posterCache.set(pk, tmdb(`${epOf(type)}/${g.w.id}`).catch(() => null));
+                    const d = await posterCache.get(pk);
+                    if (d && d.poster_path) g.w = { ...g.w, img: `https://image.tmdb.org/t/p/w300${d.poster_path}`, title: d.title || d.name || g.w.title, releaseDate: d.release_date || d.first_air_date || '', needsDetails: true, _titleOnly: undefined };
+                } catch (e) {}
+            }));
+            return ranked.filter(g => g.w.id || type !== 'YouTube').map(g => ({ w: g.w, x: { by: g.by.sort((a, b) => (aff.get(b.uid) ?? 0.5) - (aff.get(a.uid) ?? 0.5)) } }));
+        };
+
+        // Le top MaBiblio : les publications récentes de toute la communauté (300 au plus, gardées 12 h)
+        const buildCommunity = async () => {
+            const snap = await getDocs(query(collection(db, 'artifacts', appId, 'public', 'data', 'activity'), orderBy('timestamp', 'desc'), limit(300)));
+            const per = new Map();
+            snap.docs.map(d => d.data()).forEach(a => {
+                const r = num(a.rating);
+                if (!a || !a.type || !a.itemTitle || !(r > 0) || HIDDEN_TYPES.includes(a.type)) return;
+                const key = `${a.type}|${titleKey(a.itemTitle)}`;
+                const g = per.get(key) || { type: a.type, title: String(a.itemTitle), img: String(a.itemImg || ''), id: a.itemId ? String(a.itemId) : '', desc: String(a.itemDesc || '').slice(0, 400), users: new Map() };
+                if (!g.users.has(a.userId)) g.users.set(a.userId, r); // la plus récente de chaque membre
+                if (!g.id && a.itemId) g.id = String(a.itemId);
+                per.set(key, g);
+            });
+            return [...per.values()].map(g => { const rs = [...g.users.values()]; return { w: { id: g.id, type: g.type, title: g.title, img: g.img, desc: g.desc, _resolve: g.id ? undefined : 1 }, x: { avg: rs.reduce((a, b) => a + b, 0) / rs.length, n: rs.length } }; });
+        };
+        const buildTopRow = async (type) => {
+            const all = await rowItems('top:all', buildCommunity);
+            const list = (all || []).filter(e => e.w.type === type && e.w.img && !isOwned(e.w) && (e.w.id || type !== 'YouTube'));
+            const bayes = (e) => (e.x.avg * e.x.n + 7 * 2) / (e.x.n + 2);
+            const two = list.filter(e => e.x.n >= 2);
+            return (two.length >= 5 ? two : list).sort((a, b) => bayes(b) - bayes(a)).slice(0, 24);
+        };
+
+        // ---- Exécution des rangées (une fois, puis mémoire 12 h) ----
+        const rowItems = (key, builder) => {
+            const mem = recoMem();
+            const hit = mem.get(key);
+            if (hit && Date.now() - num(hit.at) < RC_TTL) return Promise.resolve(hit.items);
+            if (RC.pending.has(key)) return RC.pending.get(key);
+            const p = builder().then(items => {
+                if (items === null) { mem.set(key, { at: Date.now(), items: null }); return null; }
+                const clean = (items || []).filter(e => e && e.w && e.w.title);
+                mem.set(key, { at: Date.now(), items: clean }); saveRecoCache();
+                return clean;
+            }).catch(e => {
+                console.warn('Recommandations', key, e);
+                mem.set(key, { at: Date.now() - RC_TTL + 10 * 60 * 1000, items: hit ? hit.items : [], error: true }); // on réessaiera dans 10 min
+                return hit ? hit.items : [];
+            }).finally(() => { RC.pending.delete(key); scheduleRecoPaint(); });
+            RC.pending.set(key, p);
+            return p;
+        };
+        const rowNow = (key, builder) => {
+            const hit = recoMem().get(key);
+            if (hit && Date.now() - num(hit.at) < RC_TTL) return hit.items;
+            rowItems(key, builder);
+            return hit && hit.items ? hit.items : undefined; // undefined = en cours de chargement
+        };
+        let recoPaintTimer = null;
+        const scheduleRecoPaint = () => { clearTimeout(recoPaintTimer); recoPaintTimer = setTimeout(() => { if (window.currentView === 'reco') window.renderRecoView(); }, 120); };
+
+        // ---- Affichage ----
+        const seedKey = (s) => s.docId || `${s.type}_${s.id}`;
+        const recoRows = (type) => {
+            const T = recoTaste(type);
+            const rows = [{ key: `fy:${type}`, title: 'Pour toi', sub: { 'Film': "D'après tes genres, pays et réalisateurs préférés", 'Série': "D'après tes genres, pays et créateurs préférés", 'Livre': "D'après tes genres et tes auteurs préférés", 'Album': "D'après tes artistes préférés", 'YouTube': 'Les nouveautés de tes chaînes préférées' }[type], big: true, build: () => buildForYou(type) }];
+            T.loved.slice(0, 3).forEach(s => rows.push({ key: `by:${type}:${seedKey(s)}`, title: `Parce que tu as aimé <span class="rc-seed">${esc(s.title)}</span>`, sub: type === 'YouTube' ? 'Les autres vidéos de la même chaîne' : type === 'Album' ? 'Des artistes proches' : '', build: () => buildBecause(s) }));
+            rows.push({ key: `fr:${type}`, title: 'Tes amis ont adoré', sub: 'Noté 8 ou plus, les amis qui ont tes goûts d\'abord', build: () => buildFriendsRow(type), friends: true });
+            if (type !== 'YouTube') rows.push({ key: `cl:${type}`, title: 'Les classiques qui te manquent', sub: type === 'Album' ? 'Les incontournables de ton genre préféré' : 'Les incontournables de tes genres préférés', build: () => buildClassics(type) });
+            if (type !== 'Album') rows.push({ key: `sh:${type}`, title: 'Courts et efficaces', sub: { 'Film': 'Moins d\'1 h 30', 'Série': 'Une seule saison', 'Livre': 'Moins de 200 pages', 'YouTube': 'Moins de 10 minutes' }[type], build: () => buildShort(type) });
+            rows.push({ key: `tp:${type}`, title: 'Le top MaBiblio', sub: 'Les mieux notés par toute la communauté', build: () => buildTopRow(type), top: true });
+            return rows;
+        };
+        // Rangées dérivées (amis, top) : recalculées quand mes œuvres ou mes amis changent, à partir des données gardées
+        const derived = new Map();
+        const derivedStamp = (row) => {
+            const mine = (window.myCollection || []).length;
+            if (row.friends) return `f|${mine}|${(window.followingData || []).map(p => `${p.uid || p.id}:${(p.recoShowcase && p.recoShowcase.at) || 0}:${p.statsSummary ? 1 : 0}`).join(',')}|${Object.keys(ST.friendItems || {}).length}`;
+            const b = recoMem().get('top:all'); return `t|${b ? b.at : 0}|${mine}`;
+        };
+        const rowState = (row) => {
+            if (!row.friends && !row.top) return rowNow(row.key, row.build);
+            const stamp = derivedStamp(row);
+            const d = derived.get(row.key);
+            if (d && d.stamp === stamp) return d.items;
+            if (!(d && d.pending)) {
+                derived.set(row.key, { stamp: d ? d.stamp : null, items: d ? d.items : undefined, pending: true });
+                row.build().then(items => { derived.set(row.key, { stamp: derivedStamp(row), items: items || [] }); })
+                    .catch(e => { console.warn('Recommandations', row.key, e); derived.set(row.key, { stamp: derivedStamp(row), items: [] }); })
+                    .finally(scheduleRecoPaint);
+            }
+            return d ? d.items : undefined;
+        };
+        const tileMeta = (e, row) => {
+            const w = e.w, x = e.x || {};
+            if (x.by && x.by.length) {
+                const f = x.by[0]; const u = window.liveUser(f.uid);
+                const av = safeImg(u.avatar);
+                return `<span class="rc-by"><span class="rc-av">${av ? `<img src="${av}" alt="">` : initial(u.name)}</span>${esc(FIRST(u.name))} <b>${fr1(f.r)}</b>${x.by.length > 1 ? ` <span class="text-gray-500">+${x.by.length - 1}</span>` : ''}</span>`;
+            }
+            if (x.avg) return `<span class="rc-by"><i class="fa-solid fa-star" style="color:var(--miel)"></i> <b>${fr1(x.avg)}</b> <span class="text-gray-500">· ${x.n} avis</span></span>`;
+            const y = yearOfRelease(w);
+            const bits = [];
+            if (w.type === 'Livre' || w.type === 'Album' || w.type === 'YouTube') { if (w.author) bits.push(esc(String(w.author).split(',')[0])); }
+            if (x.short) bits.push(esc(x.short)); else if (w.type === 'YouTube' && num(w.metricValue)) bits.push(`${num(w.metricValue)} min`); else if (y && w.type !== 'YouTube') bits.push(y);
+            return bits.join(' · ');
+        };
+        const tileHtml = (e, row, k) => {
+            const w = e.w;
+            const shape = w.type === 'Album' ? 'is-square' : w.type === 'YouTube' ? 'is-wide' : '';
+            return `<button type="button" class="rc-tile ${shape}${row.big ? ' is-big' : ''}" onclick="window.openRecoTile(${jsArg(tileKey(e))})"><span class="rc-img">${coverImg(w.img, w.title, '', k < 4 ? '' : 'loading="lazy"')}</span><span class="rc-t">${esc(w._titleOnly ? cap(w.title) : w.title)}</span><span class="rc-m">${tileMeta(e, row)}</span></button>`;
+        };
+        const skeleton = (type) => `<div class="rc-strip">${`<span class="rc-tile ${type === 'Album' ? 'is-square' : type === 'YouTube' ? 'is-wide' : ''}"><span class="rc-img pv-skel"></span><span class="pv-skel-t" style="width:80%;margin-top:8px;height:12px"></span></span>`.repeat(5)}</div>`;
+        window.setRecoType = (t) => { if (!RC_TYPES.includes(t)) return; RC.type = t; window.renderRecoView(); window.scrollMainTop(); };
+        window.refreshReco = () => {
+            const t = RC.type; const mem = recoMem();
+            [...mem.keys()].forEach(k => { if (k.includes(`:${t}`) || k === 'fr:all' || k === 'top:all') mem.delete(k); });
+            derived.clear(); saveRecoCache(); window.renderRecoView();
+            window.ui.toast('Nouvelles idées en préparation…');
+        };
+        // Clé de clic stable pour une idée (le même HTML d'une fois sur l'autre → rien n'est redessiné inutilement)
+        const tileKeys = new WeakMap();
+        const tileKey = (e) => { let k = tileKeys.get(e); if (!k || !itemRegistry.has(k)) { k = regItem(e); tileKeys.set(e, k); } return k; };
+        const recoRowHtml = (row, type) => {
+            let items = rowState(row);
+            if (items === null) return '';
+            // Ce que je viens d'ajouter (vu, wishlist…) disparaît tout de suite des idées
+            if (Array.isArray(items)) items = items.filter(e => e && e.w && !isOwned(e.w));
+            if (Array.isArray(items) && !items.length && !(row.friends && statsFriends().length)) return '';
+            if (Array.isArray(items) && !items.length) return `<section class="rc-row" data-row="${esc(row.key)}"><div class="rc-h"><h3>${row.title}</h3></div><p class="rc-empty">Tes amis n'ont encore rien noté 8 ou plus que tu n'aies pas déjà. Ça se remplira à mesure qu'ils notent.</p></section>`;
+            return `<section class="rc-row" data-row="${esc(row.key)}">
+                <div class="rc-h"><h3>${row.title}</h3>${row.sub ? `<p>${esc(row.sub)}</p>` : ''}</div>
+                ${items === undefined ? skeleton(type) : `<div class="rc-strip" data-k="${esc(row.key)}">${items.map((e, k) => tileHtml(e, row, k)).join('')}</div>`}
+            </section>`;
+        };
+        window.renderRecoView = () => {
+            const c = document.getElementById('main-content');
+            if (!c || window.currentView !== 'reco' || !window.currentUser) return;
+            const type = RC.type;
+            const rows = recoRows(type);
+            const parts = rows.map(row => ({ key: row.key, html: recoRowHtml(row, type) })).filter(p => p.html);
+            const loading = rows.some(r => rowState(r) === undefined);
+            const noTaste = !recoTaste(type).rated.length;
+            const page = c.querySelector('#rc-page');
+            const box = page && page.dataset.type === type && page.dataset.nt === String(noTaste) ? page.querySelector('#rc-rows') : null;
+            const emptyHtml = !parts.length && !loading ? `<div class="px-4">${sEmpty('Pas encore d\'idée ici. Reviens après avoir noté quelques œuvres !')}</div>` : '';
+            if (box) {
+                // Page déjà affichée : on ne remplace que les rangées qui ont changé (les autres images ne bougent pas)
+                const prev = RC.lastParts || [];
+                const sameOrder = prev.length === parts.length && prev.every((p, k) => p.key === parts[k].key);
+                if (sameOrder && !emptyHtml) {
+                    parts.forEach((p, k) => {
+                        if (prev[k].html === p.html) return;
+                        const el = box.querySelector(`section[data-row="${CSS.escape(p.key)}"]`);
+                        if (!el) return;
+                        const sl = (el.querySelector('.rc-strip') || {}).scrollLeft || 0;
+                        el.outerHTML = p.html;
+                        const nw = box.querySelector(`section[data-row="${CSS.escape(p.key)}"] .rc-strip`);
+                        if (nw && sl) nw.scrollLeft = sl;
+                    });
+                } else {
+                    box.querySelectorAll('.rc-strip[data-k]').forEach(st => { RC.scroll[st.dataset.k] = st.scrollLeft; });
+                    box.innerHTML = parts.map(p => p.html).join('') + emptyHtml;
+                    box.querySelectorAll('.rc-strip[data-k]').forEach(st => { const v = RC.scroll[st.dataset.k]; if (v) st.scrollLeft = v; });
+                }
+                RC.lastParts = parts;
+                return;
+            }
+            const chips = `<div class="type-chips st-tabs rc-chips" role="tablist" aria-label="Catégories">${RC_TYPES.map(t => `<button type="button" role="tab" aria-selected="${t === type}" class="type-chip ${t === type ? 'active' : ''}" onclick="window.setRecoType('${t}')"><span class="dot" style="background:${catOf(t).c}"></span>${catOf(t).label}</button>`).join('')}</div>`;
+            c.innerHTML = `
+                <div class="pt-16 pb-32" id="rc-page" data-type="${esc(type)}" data-nt="${noTaste}">
+                    <div class="px-4 rc-top">
+                        <h1 class="rc-title">Recommandations</h1>
+                        <button type="button" class="round-btn shrink-0" onclick="window.refreshReco()" aria-label="Nouvelles idées" title="Nouvelles idées"><i class="fa-solid fa-rotate-right"></i></button>
+                    </div>
+                    <p class="px-4 text-gray-500 font-semibold text-sm mt-1">Des idées choisies d'après tes goûts</p>
+                    <div class="px-4">${chips}</div>
+                    ${noTaste ? `<div class="px-4"><div class="st-banner"><i class="fa-solid fa-star mr-1.5"></i>Note quelques ${({ 'Film': 'films', 'Série': 'séries', 'Livre': 'livres', 'Album': 'albums', 'YouTube': 'vidéos' })[type]} pour des idées vraiment faites pour toi.</div></div>` : ''}
+                    <div id="rc-rows">${parts.map(p => p.html).join('')}${emptyHtml}</div>
+                </div>`;
+            RC.lastParts = parts;
+            c.querySelectorAll('.rc-strip[data-k]').forEach(st => { const v = RC.scroll[st.dataset.k]; if (v) st.scrollLeft = v; });
+        };
+        // Ouvrir une idée : sa fiche (avec « Ajouter », « Wishlist », « Conseiller à… », « Qui l'a vu »)
+        window.openRecoTile = async (key) => {
+            const e = itemRegistry.get(key);
+            if (!e || !e.w) return;
+            let it = { ...e.w };
+            if (it._titleOnly) it.title = cap(it.title);
+            delete it._titleOnly; delete it._resolve;
+            if (!it.id) {
+                // Œuvre du top MaBiblio publiée sans identifiant : on la retrouve par son titre
+                window.ui.toast('Recherche de la fiche…');
+                try {
+                    if (it.type === 'Film' || it.type === 'Série') { const id = await tmdbIdFor(it); if (id) Object.assign(it, { id, needsDetails: true }); }
+                    else if (it.type === 'Livre') { const f = await window.searchBooks(it.title); const h = (f || []).find(b => titleKey(b.title) === titleKey(it.title)) || (f || [])[0]; if (h) it = { ...h }; }
+                    else if (it.type === 'Album') { const id = await deezerAlbumId(it); if (id) Object.assign(it, { id, needsDetails: true, platform: 'Deezer' }); }
+                } catch (err) { console.warn(err); }
+                if (!it.id) { window.ui.alert("La fiche de cette œuvre n'a pas pu être retrouvée. Cherche-la avec le bouton +."); return; }
+            }
+            it.docId = null;
+            window.openPreview(it);
+        };
+
+        // ---- Ma vitrine (mes 60 dernières œuvres notées 8+), rangée dans mon profil pour « Tes amis ont adoré » ----
+        // Mes amis la reçoivent avec mon profil (déjà chargé) : aucune lecture en plus pour eux.
+        let showcaseTimer = null;
+        window.scheduleRecoShowcase = () => { clearTimeout(showcaseTimer); showcaseTimer = setTimeout(() => window.publishRecoShowcase(), 9000); };
+        window.publishRecoShowcase = async () => {
+            if (!window.currentUser || !Array.isArray(window.myCollection) || !window.userProfile) return;
+            const uid = window.currentUser.uid;
+            const CODE = { 'Film': 'F', 'Série': 'S', 'Livre': 'L', 'Album': 'A', 'YouTube': 'Y' };
+            const items = window.myCollection.filter(i => CODE[i.type] && isDone(i) && (ratingOf(i) || 0) >= 8)
+                .sort((a, b) => String(window.itemDateKey(b) || '').localeCompare(String(window.itemDateKey(a) || ''))).slice(0, 60)
+                .map(i => {
+                    const id = String(i.id || '');
+                    const o = { k: CODE[i.type], i: /^manual_|_public$/.test(id) ? '' : id.slice(0, 60), t: String(i.title || '').slice(0, 100), r: ratingOf(i) };
+                    const img = String(i.img || ''); if (/^https:\/\//.test(img) && img.length < 300) o.m = img;
+                    if (i.author && i.type !== 'Film' && i.type !== 'Série') o.a = String(i.author).split(',')[0].trim().slice(0, 40);
+                    const y = yearOfRelease(i); if (y) o.y = y;
+                    return o;
+                });
+            const cur = window.userProfile.recoShowcase;
+            if (cur && JSON.stringify(cur.items || []) === JSON.stringify(items)) return;
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'users', uid, 'profile', 'info'), { recoShowcase: { v: 1, at: Date.now(), items } });
+                window.userProfile.recoShowcase = { v: 1, at: Date.now(), items };
+            } catch (e) { console.warn('Vitrine', e); }
+            // Ménage (version de test du 23/10) : l'ancienne vitrine séparée n'est plus utilisée
+            try {
+                if (localStorage.getItem(`mabiblio_showcase_clean_${uid}`) !== '1') {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'users', uid, 'profile', 'reco'));
+                    localStorage.setItem(`mabiblio_showcase_clean_${uid}`, '1');
+                }
+            } catch (e) { /* rien à nettoyer */ }
+        };
+
+        /* --- J.12 SUR CHAQUE FICHE : « Qui l'a vu parmi mes amis ? » et « Conseiller à… » ---
+           Les œuvres de mes amis viennent de leurs résumés (déjà chargés avec leur profil) : aucune lecture en plus. */
+        const friendIdx = new Map();
+        const indexOfFriend = (f) => {
+            const full = ST.friendItems[f.uid];
+            const src = full && full.items && !full.error ? full.items : (friendSummary(f) || f.summary);
+            if (!src) return null;
+            const sig = Array.isArray(src) ? src : String(src.works || '');
+            const m = friendIdx.get(f.uid);
+            if (m && m.sig === sig) return m.idx;
+            const idx = new Map();
+            const list = Array.isArray(src) ? src.filter(isDone) : parseSummaryWorks(src);
+            list.forEach(w => workKeys(w).forEach(k => { if (!idx.has(k)) idx.set(k, ratingOf(w)); }));
+            friendIdx.set(f.uid, { sig, idx });
+            return idx;
+        };
+        // Préparé en tâche de fond quelques secondes après l'ouverture : la 1re fiche s'ouvre aussi vite que les autres
+        // (un ami à la fois, dans les moments où le téléphone ne fait rien : jamais de blocage)
+        setTimeout(() => {
+            if (!window.currentUser) return;
+            const queue = statsFriends();
+            const idle = (fn) => ('requestIdleCallback' in window) ? requestIdleCallback(fn, { timeout: 4000 }) : setTimeout(fn, 60);
+            const step = () => { const f = queue.shift(); if (!f) return; try { indexOfFriend(f); } catch (e) {} idle(step); };
+            idle(step);
+        }, 6000);
+        const friendsWhoSaw = (item) => {
+            if (!item || !item.title) return [];
+            const keys = workKeys(item);
+            if (item.tmdbId) keys.push(`${item.type}|id|${item.tmdbId}`);
+            return statsFriends().map(f => {
+                const idx = indexOfFriend(f);
+                if (!idx) return null;
+                const k = keys.find(x => idx.has(x));
+                return k ? { uid: f.uid, name: f.name, r: idx.get(k) } : null;
+            }).filter(Boolean).sort((a, b) => (b.r ?? 0) - (a.r ?? 0));
+        };
+        window.previewFriendsHtml = (item) => {
+            if (!item || HIDDEN_TYPES.includes(item.type) || !(window.followingData || []).length) return '';
+            const saw = friendsWhoSaw(item);
+            const av = (p) => { const u = window.liveUser(p.uid, p.name); const a = safeImg(u.avatar); return `<span class="pv-fr-av">${a ? `<img src="${a}" alt="">` : initial(u.name)}</span>`; };
+            const label = !saw.length ? "Aucun ami ne l'a encore" + ({ 'Livre': ' lu', 'Album': ' écouté' }[item.type] || ' vu')
+                : saw.length === 1 ? `<b>${esc(FIRST(window.liveUser(saw[0].uid, saw[0].name).name))}</b> l'a ${({ 'Livre': 'lu', 'Album': 'écouté' })[item.type] || 'vu'}`
+                : `<b>${saw.length} amis</b> l'ont ${({ 'Livre': 'lu', 'Album': 'écouté' })[item.type] || 'vu'}`;
+            const list = saw.length ? `<ul class="pv-fr-list" id="pv-fr-list">${saw.map(p => `<li onclick="window.openPublicProfile(${jsArg(p.uid)})">${av(p)}<span class="flex-1 min-w-0 truncate font-bold text-[14px]">${esc(window.liveUser(p.uid, p.name).name)}</span>${p.r !== null && p.r !== undefined ? `<span class="wl-rate">${fr1(p.r)}</span>` : '<span class="text-[12px] font-semibold text-gray-500">sans note</span>'}</li>`).join('')}</ul>` : '';
+            return `<div class="pv-fr">
+                <div class="pv-fr-top">
+                    <button type="button" class="pv-fr-who" ${saw.length ? `onclick="document.getElementById('pv-fr-list').classList.toggle('open'); this.classList.toggle('open')"` : 'disabled'}>
+                        ${saw.length ? `<span class="pv-fr-stack">${saw.slice(0, 3).map(av).join('')}</span>` : '<span class="pv-fr-stack"><span class="pv-fr-av is-empty"><i class="fa-solid fa-user-group"></i></span></span>'}
+                        <span class="min-w-0 text-[13px] font-semibold leading-tight">${label}</span>
+                        ${saw.length ? '<i class="fa-solid fa-chevron-down pv-fr-chev"></i>' : ''}
+                    </button>
+                    <button type="button" class="pv-fr-reco" onclick="window.openRecoPicker()"><i class="fa-solid fa-paper-plane"></i>Conseiller à…</button>
+                </div>
+                ${list}
+            </div>`;
+        };
+
+        // Choisir un ou plusieurs amis à qui conseiller l'œuvre affichée
+        const RP = { item: null, picked: new Set() };
+        window.openRecoPicker = () => {
+            const it = window.tempItem;
+            if (!it || !window.currentUser) return;
+            const friends = statsFriends();
+            if (!friends.length) { window.ui.alert('Abonne-toi à des amis pour leur conseiller des œuvres.'); return; }
+            RP.item = it; RP.picked = new Set();
+            const saw = new Map(friendsWhoSaw(it).map(p => [p.uid, p.r]));
+            const sent = new Set((window.userProfile.recosSent || []));
+            const rows = friends.map(f => {
+                const u = window.liveUser(f.uid, f.name); const a = safeImg(u.avatar);
+                const tag = saw.has(f.uid) ? `<span class="rp-tag">${({ 'Livre': "L'a lu", 'Album': "L'a écouté" })[it.type] || "L'a vu"}${saw.get(f.uid) ? ` · ${fr1(saw.get(f.uid))}★` : ''}</span>` : sent.has(recoSentKey(f.uid, it)) ? '<span class="rp-tag">Déjà conseillé</span>' : '';
+                return `<li><label class="rp-row"><input type="checkbox" value="${esc(f.uid)}" onchange="window.toggleRecoPick(this.value, this.checked)"><span class="pv-fr-av" style="width:40px;height:40px">${a ? `<img src="${a}" alt="">` : initial(u.name)}</span><span class="flex-1 min-w-0"><span class="block font-extrabold text-[15px] truncate">${esc(u.name)}</span>${tag}</span><span class="rp-check"><i class="fa-solid fa-check"></i></span></label></li>`;
+            }).join('');
+            const ov = document.createElement('div');
+            ov.className = 'sheet-overlay open'; ov.id = 'reco-picker';
+            ov.onclick = (ev) => { if (ev.target === ov) window.closeRecoPicker(); };
+            ov.innerHTML = `<div class="sheet flex flex-col" style="height:auto;max-height:86vh">
+                <div class="sheet-head"><button type="button" class="ghost" onclick="window.closeRecoPicker()">Annuler</button><span class="font-display font-extrabold text-lg">Conseiller</span><button type="button" class="solid" id="rp-send" onclick="window.sendRecoPicks()" disabled style="opacity:.4">Envoyer</button></div>
+                <div class="px-4 pb-3 flex items-center gap-3">${coverImg(it.img, it.title, 'st-common-img', '')}<div class="min-w-0"><div class="font-extrabold text-[15px] leading-tight">${esc(it.title)}</div><div class="text-[12px] font-semibold text-gray-500">${esc(it.type)}</div></div></div>
+                <ul class="rp-list">${rows}</ul>
+                <div class="px-4 pt-2" style="padding-bottom:calc(env(safe-area-inset-bottom) + 18px)"><input type="text" id="rp-note" maxlength="200" class="rp-note" placeholder="Un petit mot ? (facultatif)"></div>
+            </div>`;
+            document.body.appendChild(ov);
+        };
+        window.closeRecoPicker = () => { const o = document.getElementById('reco-picker'); if (o) o.remove(); };
+        window.toggleRecoPick = (uid, on) => {
+            if (on) RP.picked.add(uid); else RP.picked.delete(uid);
+            const b = document.getElementById('rp-send');
+            if (b) { b.disabled = !RP.picked.size; b.style.opacity = RP.picked.size ? '1' : '.4'; b.textContent = RP.picked.size > 1 ? `Envoyer (${RP.picked.size})` : 'Envoyer'; }
+        };
+        window.sendRecoPicks = async () => {
+            const it = RP.item; const uids = [...RP.picked];
+            if (!it || !uids.length) return;
+            const note = String((document.getElementById('rp-note') || {}).value || '').trim();
+            const b = document.getElementById('rp-send'); if (b) { b.disabled = true; b.textContent = 'Envoi…'; }
+            let ok = 0;
+            for (const uid of uids) { if (await sendRecoNotif(uid, it, note)) ok++; }
+            window.closeRecoPicker();
+            if (ok === uids.length) window.ui.toast(ok > 1 ? `Conseil envoyé à ${ok} amis ✓` : `Conseil envoyé à ${FIRST(window.liveUser(uids[0]).name)} ✓`);
+            else window.ui.alert(ok ? `Conseil envoyé à ${ok} ami${ok > 1 ? 's' : ''} sur ${uids.length}. Réessaie pour les autres.` : "Le conseil n'a pas pu être envoyé. Réessaie.");
+        };
+
         /* --- J.9 NOUVEAUTÉS : fenêtre affichée une fois après la mise à jour + annonce à tous ---
            • Chaque téléphone voit la fenêtre UNE fois par version (mémorisé sur l'appareil). Elle reste
              accessible depuis Profil → Réglages → « Nouveautés de l'appli ».
            • L'annonce à tous (bouton visible seulement si le profil porte admin = true, à régler une fois
              dans la console Firebase) dépose une notification « annonce » chez chaque membre : elle arrive
              dans la cloche ET sur les téléphones où les notifications sont activées. */
-        const WHATS_NEW_VERSION = '2026-11-v5.2';
+        // Deux fenêtres, chacune vue UNE fois par téléphone, puis la demande de notifications :
+        //   1. « Quoi de neuf ? » (la grande mise à jour : notifications, stats, look, profil…) — déjà vue par ceux
+        //      qui ont ouvert l'appli depuis le 22/10 ;
+        //   2. « Recommandations » (la nouvelle page, « Qui l'a vu », « Conseiller à… », profil via la photo).
+        // Un compte tout neuf (bibliothèque vide) ne voit aucune des deux : il découvre tout directement.
+        const WHATS_NEW_VERSION = '2026-11-v5.4';   // annonce à tous (mémo « déjà envoyée »)
+        const WN1_SEEN = ['2026-11-v5.2', '2026-11-v5.4'];
+        const WN2_KEY = 'mabiblio_whats_new_reco';
         const WHATS_NEW = [
             { icon: 'fa-solid fa-bell', bg: 'var(--mint)', t: 'Les notifications', d: 'Likes, commentaires, réponses et conseils arrivent directement sur ton téléphone.' },
             { icon: 'fa-solid fa-chart-simple', bg: 'var(--miel)', t: 'Des stats repensées', d: 'Tout le détail par catégorie, tes affinités et le match de l’année entre amis.' },
@@ -5508,40 +6643,72 @@ window.startStatsEnrichment = async () => {
             { icon: 'fa-solid fa-wand-magic-sparkles', bg: 'var(--rose)', t: 'Profil et fiches enrichis', d: 'Ton top 3, bandes-annonces, extraits audio, revisionnages, réponses aux commentaires, et toutes les œuvres d’un acteur ou d’un auteur en un toucher.' },
             { icon: 'fa-solid fa-screwdriver-wrench', bg: 'var(--corail)', t: 'Plus fluide', d: 'Plein de bugs corrigés et une appli plus rapide au quotidien.' }
         ];
+        const WHATS_NEW_RECO = [
+            { icon: 'fa-regular fa-compass', bg: 'var(--lav)', t: 'Un onglet rien que pour toi', d: 'La boussole, en bas de l’écran : des films, séries, livres, albums et vidéos choisis d’après tes notes.' },
+            { icon: 'fa-solid fa-heart', bg: 'var(--rose)', t: 'Parce que tu as aimé…', d: 'Tes coups de cœur notés 9 ou 10 t’amènent des idées dans le même esprit.' },
+            { icon: 'fa-solid fa-user-group', bg: 'var(--mint)', t: 'Tes amis ont adoré', d: 'Ce qu’ils ont noté 8 ou plus, en commençant par ceux qui ont les mêmes goûts que toi.' },
+            { icon: 'fa-solid fa-trophy', bg: 'var(--miel)', t: 'Classiques, courts et top MaBiblio', d: 'Les incontournables qui te manquent, des œuvres courtes pour quand tu as peu de temps, et les mieux notées par la communauté.' },
+            { icon: 'fa-solid fa-paper-plane', bg: 'var(--corail)', t: 'Qui l’a vu ? Conseille-le !', d: 'Sur chaque fiche : tes amis qui l’ont vu avec leur note, et un bouton pour la conseiller.' }
+        ];
         const ANNOUNCE_TITLE = 'Nouvelle version de MaBiblio 🎉';
-        const ANNOUNCE_TEXT = 'Notifications, stats repensées, nouveau look et plein d’améliorations : ouvre l’appli pour tout découvrir !';
-        window.showWhatsNew = (force = false) => {
-            if (document.getElementById('whats-new')) return;
+        const ANNOUNCE_TEXT = 'Recommandations, « Qui l’a vu parmi mes amis ? », conseils depuis chaque fiche : ouvre l’appli pour tout découvrir !';
+        const lsGet = (k) => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
+        const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+        // Une fenêtre d'info ; la promesse se termine quand on la ferme
+        const infoBox = ({ kicker, title, items, okLabel, head, foot, onOk }) => new Promise(resolve => {
+            const old = document.getElementById('whats-new'); if (old) old.remove();
             const overlay = document.createElement('div');
             overlay.className = 'ui-overlay';
             overlay.id = 'whats-new';
             overlay.innerHTML = `<div class="ui-box wn-box" role="dialog" aria-modal="true" aria-labelledby="wn-title">
-                <div class="wn-head"><span class="wn-blob" style="background:var(--miel);left:-18px;top:-22px"></span><span class="wn-blob" style="background:var(--rose);right:-14px;top:-30px;width:70px;height:70px"></span><span class="wn-blob" style="background:var(--mint);right:46px;bottom:-26px;width:46px;height:46px"></span>
-                    <span class="wn-kicker">Mise à jour</span><p class="font-display wn-title" id="wn-title">Quoi de neuf sur MaBiblio ?</p></div>
-                <ul class="wn-list">${WHATS_NEW.map((w, k) => `<li style="animation-delay:${0.05 + k * 0.06}s"><span class="wn-ic" style="background:${w.bg}"><i class="${w.icon}"></i></span><span><b>${w.t}</b><span>${w.d}</span></span></li>`).join('')}</ul>
-                <button type="button" class="ui-btn ui-ok w-full" id="wn-ok">C'est parti !</button>
+                <div class="wn-head" style="background:${head || 'var(--lav)'}"><span class="wn-blob" style="background:var(--miel);left:-18px;top:-22px"></span><span class="wn-blob" style="background:var(--rose);right:-14px;top:-30px;width:70px;height:70px"></span><span class="wn-blob" style="background:var(--mint);right:46px;bottom:-26px;width:46px;height:46px"></span>
+                    <span class="wn-kicker">${kicker}</span><p class="font-display wn-title" id="wn-title">${title}</p></div>
+                <ul class="wn-list">${items.map((w, k) => `<li style="animation-delay:${0.05 + k * 0.06}s"><span class="wn-ic" style="background:${w.bg}"><i class="${w.icon}"></i></span><span><b>${w.t}</b><span>${w.d}</span></span></li>`).join('')}</ul>
+                ${foot ? `<p class="wn-foot">${foot}</p>` : ''}
+                <button type="button" class="ui-btn ui-ok w-full" id="wn-ok">${okLabel}</button>
             </div>`;
             document.body.appendChild(overlay);
             requestAnimationFrame(() => overlay.classList.add('show'));
-            try { localStorage.setItem('mabiblio_whats_new', WHATS_NEW_VERSION); } catch (e) {}
-            const close = () => { overlay.classList.remove('show'); setTimeout(() => overlay.remove(), 200); };
-            overlay.querySelector('#wn-ok').onclick = close;
-            overlay.onclick = (e) => { if (e.target === overlay) close(); };
+            let done = false;
+            const close = (ok) => { if (done) return; done = true; overlay.classList.remove('show'); setTimeout(() => { overlay.remove(); if (ok && onOk) onOk(); resolve(); }, 200); };
+            overlay.querySelector('#wn-ok').onclick = () => close(true);
+            overlay.onclick = (e) => { if (e.target === overlay) close(false); };
+        });
+        const showWhatsNew1 = (more) => { lsSet('mabiblio_whats_new', WN1_SEEN[0]); return infoBox({ kicker: 'Mise à jour', title: 'Quoi de neuf sur MaBiblio ?', items: WHATS_NEW, okLabel: more ? 'Suivant' : 'C’est parti !' }); };
+        const showWhatsNew2 = () => {
+            lsSet(WN2_KEY, '1');
+            return infoBox({ kicker: 'Nouveau', title: 'Des recommandations rien que pour toi', items: WHATS_NEW_RECO, head: 'var(--mint)', okLabel: 'Découvrir mes recommandations',
+                foot: '<i class="fa-solid fa-circle-user mr-1"></i>Ton profil s’ouvre maintenant en touchant ta photo, en haut de l’accueil.',
+                onOk: () => { if (window.currentUser) window.switchView('reco'); } });
         };
-        // Première ouverture après la mise à jour : une seule fois, quand aucune autre fenêtre n'est ouverte
+        // Depuis Profil → « Nouveautés de l'appli » ou une annonce : les deux fenêtres à la suite
+        window.showWhatsNew = async () => {
+            if (document.getElementById('whats-new')) return;
+            await showWhatsNew1(true);
+            await new Promise(r => setTimeout(r, 250));
+            await showWhatsNew2();
+        };
+        // À l'ouverture : fenêtre 1 (si pas encore vue) → fenêtre 2 (si pas encore vue) → demande de notifications
         (() => {
             const started = Date.now();
-            const tryShow = () => {
-                let seen = '';
-                try { seen = localStorage.getItem('mabiblio_whats_new') || ''; } catch (e) {}
-                if (seen === WHATS_NEW_VERSION) return;
-                if (!window.currentUser || !window.userProfile || !window.userProfile.name || !Array.isArray(window.myCollection)) { if (Date.now() - started < 60000) setTimeout(tryShow, 1500); return; }
-                // Compte tout neuf (rien dans la bibliothèque) : pas de « nouveautés », il découvre tout
-                if (!window.myCollection.length) { try { localStorage.setItem('mabiblio_whats_new', WHATS_NEW_VERSION); } catch (e) {} return; }
-                if (document.querySelector('.ui-overlay') || document.querySelector('.modal.open') || document.querySelector('.sheet-overlay.open')) { setTimeout(tryShow, 2500); return; }
-                window.showWhatsNew();
+            const pause = (ms) => new Promise(r => setTimeout(r, ms));
+            const run = async () => {
+                if (!window.currentUser || !window.userProfile || !window.userProfile.name || !Array.isArray(window.myCollection)) {
+                    if (Date.now() - started < 60000) { setTimeout(run, 1500); return; }
+                    if (window.maybeAskPush) window.maybeAskPush();
+                    return;
+                }
+                if (document.querySelector('.ui-overlay') || document.querySelector('.modal.open') || document.querySelector('.sheet-overlay.open')) { setTimeout(run, 2500); return; }
+                const fresh = !window.myCollection.length;
+                const need1 = !fresh && !WN1_SEEN.includes(lsGet('mabiblio_whats_new'));
+                const need2 = !fresh && lsGet(WN2_KEY) !== '1';
+                if (fresh) { lsSet('mabiblio_whats_new', WN1_SEEN[0]); lsSet(WN2_KEY, '1'); }
+                if (need1) await showWhatsNew1(need2);
+                if (need2) { if (need1) await pause(300); await showWhatsNew2(); }
+                if (need1 || need2) await pause(500);
+                if (window.maybeAskPush) window.maybeAskPush();
             };
-            setTimeout(tryShow, 4000);
+            setTimeout(run, 2500);
         })();
 
         window.sendAnnouncement = async () => {
@@ -5769,7 +6936,8 @@ window.startStatsEnrichment = async () => {
             // Appel direct (sans attente) pour que le téléphone accepte d'afficher sa demande d'autorisation
             overlay.querySelector('#push-ask-ok').onclick = () => { close(); window.enablePush(); };
         };
-        (() => {
+        // Lancée APRÈS les fenêtres « Quoi de neuf ? » / « Recommandations » (voir J.9)
+        {
             const started = Date.now();
             const tryAsk = () => {
                 if (!VAPID_KEY) return;
@@ -5784,8 +6952,8 @@ window.startStatsEnrichment = async () => {
                 try { localStorage.setItem('mabiblio_push_ask', JSON.stringify({ n: st.n + 1, at: Date.now() })); } catch (e) {}
                 window.showPushAsk();
             };
-            setTimeout(tryAsk, 2500);
-        })();
+            window.maybeAskPush = tryAsk;
+        }
 
         // Service worker : uniquement sur le vrai site (https), jamais en test local (fichier ou banc d'essai)
         if ('serviceWorker' in navigator && (location.protocol === 'https:' || (location.hostname === 'localhost' && /[?&]swtest\b/.test(location.search)))) {
